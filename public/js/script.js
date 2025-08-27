@@ -64,9 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!isPhone) {
     const trigger = document.querySelector('#browse-escorts-trigger');
-    trigger.innerText = 'Live Calls';
-    trigger.href = '/live-calls';
-    trigger.style.pointerEvents = 'auto';
+    trigger.style.display = 'none';
   }
 
   const location = {

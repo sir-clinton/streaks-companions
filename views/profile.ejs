@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="title" content="Nairobi Escorts and Discreet Call Girls near me | Streak-1.onrender.com">
-    <meta name="description" content="<%= escort.city %> Escorts in <%= escort.areaLabel %> – Meet <%= escort.name %> Elite Escort In <%= escort.areaLabel %> Offering Elite Companionship & Eperiences">
+    <meta name="title" content="<%= escort.areaLabel %> Escorts and Discreet Hot companions near you | Streak-1.onrender.com">
+    <meta name="description" content="Discover <%= escort.name %>, a verified elite escort in <%= escort.areaLabel %>, <%= escort.city %>. Offering luxury companionship and discreet adult services tailored to your desires.">
     <meta name="keywords" content="Nairobi escorts, companions in <%= escort.areaLabel %>, female escorts <%= escort.areaLabel %>, private meetups near me, discreet companionship Nairobi">
-    <title><%= escort.name %></title>
+    <title>Meet <%= escort.name %> – Verified Escort in <%= escort.areaLabel %> | Discreet Companions Near You</title>
     <link rel="icon" href="/public/images/favicon.png" type="image/png">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
@@ -175,11 +175,11 @@
        <%- include('partials/header') %>
        <div id="galleryOpacity">
         <span style="cursor: pointer; position: absolute; top: 20px; right: 25px; color: white; font-size: 2.1rem" id="closeImgOpacity">&times;</span>
-        <div class="carousel" style="position: relative;">
+        <div class="carousel" style="position: relative;" role="region" aria-label="Image carousel">
         <button class="slide-arrow" id="slide-arrow-prev">
         &#8249;
         </button>
-            <img id="carousel-image" src="" alt="Carousel Image" style="width: 100%; max-height: 80vh; object-fit: contain;">         
+            <img id="carousel-image" src="" alt="Carousel Image" alt="Profile image of <%= escort.name %>" style="width: 100%; max-height: 80vh; object-fit: contain;">         
         <button class="slide-arrow" id="slide-arrow-next">
          &#8250;</button>
         </div>
@@ -188,43 +188,37 @@
         <section id="hero-section2">
             <div class="profile-preview" style="background-image: url('<%= escort.backgroundImg %>');">
                 <div class="preview-img">
-                    <img loading="lazy" src="<%= escort.userImg %>" alt="">
+                    <img loading="lazy" fetchpriority="low" src="<%= escort.userImg %>" alt="background profile image of <%= escort.name %>, elite escort, companion in <%= escort.areaLabel %> offering massages, Dinner date & Adult Companionship">
                 </div>
             </div>
             <div class="social-links" style="display: flex; justify-content: space-between; padding: 10px 0; background-color: #25D366; padding: 8px">
                 <ul class="social-links-nav">
                     <% if(escort.facebook){%>
-                        <a href='<%= escort.facebook%>' target="_blank" title="Facebook">
+                        <a href='<%= escort.facebook%>' target="_blank" title="Follow <%= escort.name %> on facebook">
                         <i class="fab fa-facebook-f"></i>
                         </a>
 
                    <% } %>
                     <% if(escort.twitter){%>
-                        <a href='<%= escort.twitter%>' target="_blank" title="Facebook">
+                        <a href='<%= escort.twitter%>' target="_blank" title="Follow <%= escort.name %> on twitter">
                         <i class="fab fa-twitter"></i>
                         </a>
 
                    <% } %>
                    
                     <% if(escort.instagram){%>
-                        <a href='<%= escort.instagram%>' target="_blank" title="Facebook">
+                        <a href='<%= escort.instagram%>' target="_blank" title="Follow <%= escort.name %> on instagram">
                         <i class="fab fa-instagram"></i>
                         </a>
 
                    <% } %>
                     <% if(escort.tiktok){%>
-                        <a href='<%= escort.facebook%>' target="_blank" title="Facebook">
+                        <a href='<%= escort.tiktok%>' target="_blank" title="Follow <%= escort.name %> on tiktok">
                         <i class="fab fa-tiktok"></i>
                         </a>
 
                    <% } %>
-                    <% if(escort.tiktok){%>
-                        <a href='<%= escort.facebook%>' target="_blank" title="Facebook">
-                            <i class="fab fa-snapchat"></i>
-                        </a>
-
-                   <% } %>
-                   
+    
                 </ul>
                 <a style="display: flex; align-items: center; color: white; background-color: #128C7E; border: none; border-radius: 4px" href="https://wa.me/254751142915" title="Send a Message" class="button">
                     <i class="fab fa-whatsapp"></i>Message
@@ -267,14 +261,14 @@
             <div class="listings" style="justify-content: flex-start">
                <% similarEscorts.forEach(escort => { %>
                 <div class="card" style="display: flex">
-                    <a href='/author/<%= escort.name%>' >
+                    <a href='/author/<%= escort.name%>' title="Meet <%= escort.name %>, <%= escort.city %> hot and verified companion in <%= escort.areaLabel %>">
                     <% if (escort.isBoosted) { %>
                     <div class="badge <%= escort.boostType %>">
                         <%= escort.boostType %>
                     </div>
                     <% } %>
                 <div class="image-wrapper">
-                    <img loading="lazy" src="<%= escort.userImg%>" alt="<%= escort.name%>">
+                    <img loading="lazy" src="<%= escort.userImg%>" alt="Meet <%= escort.name %>, <%= escort.city %> hot and verified companion in <%= escort.areaLabel %> offering massages, Dinner date & Adult Companionship" title="Meet <%= escort.name %>, <%= escort.city %> hot and verified escort in <%= escort.areaLabel %>, offering massages, Dinner date & Adult Companionship">
                 </div></a>
                 <div class="info">
                     <p class="escort-name"><%= escort.name%></p>
@@ -283,7 +277,7 @@
                 </div><hr>
                     <p style="padding: 4px;color: #6c757d;">Meet <%= escort.name.split(' ')[0]%> a <%= escort.age %> years old <%= escort.gender%> Escort from <%= escort.city%>, <%= escort.areaLabel %> area.</p>
                 <div class="call">
-                    <a href="tel: 0713452235" title="call <%= escort.name.split(' ')[0].toUpperCase() %>">
+                    <a href="tel: 0713452235" title="live call <%= escort.name.split(' ')[0].toUpperCase() %>">
                 CALL <%= escort.name.split(' ')[0].toUpperCase() %>
                 &nbsp;<i class="fa fa-phone"></i></a>
                 </div>

@@ -13,6 +13,7 @@
                     <ul class="submenu" id="browse-escorts-submenu" role="menu" aria-label="Browse Locations Submenu">
                         <!-- submenu items should be <div role="menuitem"> or <a role="menuitem"> -->
                     </ul>
+                    <li class="nav-item" role="listitem"><a href="/live-calls">Live Calls</a></li>
                     <li class="nav-item" role="listitem"><a href="/agencies" class="nav-link">Agency</a></li>
                     <li class="nav-item" role="listitem"><a href="#contact" class="nav-link">Contact Us</a></li>
                 </ul>
@@ -27,7 +28,7 @@
                     %>
                     <li class="nav-item" role="listitem" style="display: flex; justify-content: center; align-items: center;">
                         <a href="<%= profileLink %>" title="<%= loggedInEscort.name %>" class="escort-profile-link nav-link" style="display: flex; justify-content: center; align-items: center; padding: 0; margin-left: 8px;">
-                        <img src="<%= loggedInEscort.userImg || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png' %>" alt="Profile picture of <%= loggedInEscort.name %>" style="border-radius: 50%; width: 30px; height: 30px">
+                        <img src="<%= loggedInEscort.userImg || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png' %>" alt="Profile picture of <%= loggedInEscort.name %> a verified escort companion in <%= loggedInEscort.areaLabel %>" title="Profile picture of <%= loggedInEscort.name %> a verified escort companion in <%= loggedInEscort.areaLabel %>" style="border-radius: 50%; width: 30px; height: 30px">
                         <span class='name' style="margin-left: 8px;">Hi, <%= nameParts.length > 1 ? nameParts[0] : loggedInEscort.name %></span>
                         </a>
                     </li>
