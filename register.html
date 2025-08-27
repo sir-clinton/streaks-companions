@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        *{
+            padding: 0;
+            box-sizing: border-box;
+            margin: 0;
+            font-family: 'Satoshi', sans-serif;
+        }body {
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+            background-color: inherit;
+            justify-content: center;
+            align-items: center;
+        }.registration-box {
+            max-width: 400px;
+            margin: auto;
+            background-color: #fff;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, .3);
+        }.registration-box h3{
+            padding: 10px 0;
+            font-size: 22px;
+        }
+        form input, select,button{
+            width: 100%;
+            height: 48px;
+            max-width: 340px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            padding: 8px 10px;
+            margin-bottom: 15px;
+        }
+        form input:focus, select:focus {
+          outline: #25D366;
+        }
+        /* Base styling for next/submit buttons */
+        button,
+        input[type="submit"] {
+        cursor: pointer;
+        padding: 10px 0;
+        display: block;
+        width: 100%;
+        max-width: 340px;
+        margin: 10px auto;
+        color: white;
+        border: none;
+        transition: all 0.5s ease;
+        background-color: #25D366;
+        border-radius: 5px;
+        font-weight: bold;
+        }
+
+        /* Hover state */
+        button:hover,
+        input[type="submit"]:hover {
+          background-color: #3ba626;
+        }
+
+        /* Disabled state */
+        button:disabled,
+        input[type="submit"]:disabled {
+        background-color: #aaa;
+        cursor: not-allowed;
+        opacity: 0.6;
+        box-shadow: none;
+        }
+        /* Focus state */
+        button:focus,
+        input[type="submit"]:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        input[type="submit"],
+        .previous{
+            display: none;
+        }
+        #error{
+            text-align: left;
+            margin: 10px 0;
+            color: red;
+        }.strength-meter {
+          margin-top: 5px;
+          font-size: 13px;
+          font-weight: bold;
+          color: #555;
+        }
+        .strength-meter:empty {
+          display: none;
+        }
+      .progress-container {
+        width: 100%;
+        background-color: #e0e0e0;
+        border-radius: 20px;
+        overflow: hidden;
+        height: 10px;
+        margin-bottom: 20px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background-color: #25D366;
+        transition: width 0.4s ease;
+      }
+        @media (max-width: 600px){
+            .registration-box{
+                width: 90%;
+                padding: 20px;
+            }
+            input[type=submit]{
+                width: 100%;
+                display: inline-block;
+                margin: 10px auto;
+                max-width: 300px;
+            }
+        }.gender-interested, .xtras, .password-box {
+            display: none;
+
+        }form h4{
+            padding: 16px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="registration-box">
+            <h3>Register</h3>
+            <div class="progress-container">
+          <div class="progress-bar" id="progressBar"></div>
+          </div>
+            <form id="form" >
+                <div class="name-weight">
+                    <h4>Let's start with your basic profile</h4>
+                    <input type="text" id="name" name="name" id="name" placeholder="Username" required>
+                    <input type="email" name="email" id="email" placeholder="Email" required>
+                    Birthdate:
+                    <input type="date" name="dob" id="dob"  required>
+                    <div id="dob-error" style="color: red; display: none;"></div>
+                    <label for="weight">Your Weight (kg):</label>
+                    <input type="number" id="weight" name="weight" min="40" max="130" required>
+                    <div id="weight-error" style="color: red; display: none;"></div>
+                </div>
+                <div class="gender-interested">
+                    <h4>Share your identity and interest</h4>
+                    <select name="gender" id="gender" required>
+                        <option value="" disabled selected hidden>Select Gender</option>
+                        <option value="female">female</option>
+                        <option value="male">male</option>
+                        <option value="transexual">transexual</option>
+                    </select>
+                    <select name="interested" id="interested" required>
+                        <option value="" disabled selected hidden>Select Interest</option>
+                        <option value="boys">boys</option>
+                        <option value="girls">girls</option>
+                        <option value="boys & girls">boys & girls</option>
+                    </select>
+
+                    <select name="orientation" id="orientaton" required>
+                      <option value="" disabled selected hidden>Select orientation</option>
+                      <option value="Straight">Straight</option>
+                      <option value="Lesbian">Lesbian</option>
+                      <option value="Gay">Gay</option>
+                    </select>
+                    
+                </div>
+                <div class="xtras">
+                    <h4>Let us know your city and preferences</h4>
+                    select your City:
+                    <select name="city" id="city" required>
+                        <option value="" disabled selected hidden>Select City</option>
+                        <option value="Nairobi">Nairobi</option>
+                        <option value="Kimbu">Kiambu</option>
+                        <!-- <option value="Mombasa">Mombasa</option>
+                        <option value="Kisumu">Kisumu</option>
+                        <option value="Nakuru">Nakuru</option>
+                        <option value="Eldoret">Eldoret</option></select> -->
+                      </select>
+                      <select name="areaLabel" id="location" required>
+                        <option value="" disabled selected hidden>Select Area</option>
+                      </select>
+
+                        <h4>🧾 What services do you offer?</h4>
+                      <select name="services" id="services" required multiple show="2">
+                          <option value="DINNER DATE">DINNER DATE</option>
+                          <option value="TRAVEL COMPANION">TRAVEL COMPANION</option>
+                          <option value="RIMMING">SEXY LIVE CALLS</option>
+                          <option value="GIRLFRIEND EXPERIENCE">GIRLFRIEND EXPERIENCE</option>
+                          <option value="MASSAGE">MASSAGE</option>
+                          <option value="LESBIAN SHOW">LESBIAN SHOW</option>
+                          <!-- 
+                          <option value="CUM ON BODY">CUM ON BODY</option>
+                          <option value="CUM IN MOUTH">CUM IN MOUTH</option>
+                          <option value="3 SOME">3 SOME</option>
+                          <option value="ANAL">ANAL</option>
+                          <option value="RAW BJ">RAW BJ</option>
+                          <option value="LESBIAN SHOW">LESBIAN SHOW</option> -->
+                       </select>
+                </div>
+
+                <div class="password-box">
+                    <h4>Please create a strong password</h4>
+                    <input type="password" name="password" id="password" placeholder="password" required>
+                    <input type="password" id="confirm" placeholder="confirm password" required><br>
+                </div>
+                <p id="error"></p>
+                <div class="btn-container" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <button type="button" class="previous">Previous</button>
+                    <button type="button" class="next" disabled>Next</button>
+                    <input type="submit" value="SUBMIT">
+                </div>
+            </form>
+              <p>Already have an account? <a href='/login' style="color: #25D366">Login</a></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+const form = document.querySelector('#form');
+const submitBtn = form.querySelector('input[type="submit"]');
+const nextBtn = document.querySelector('.next');
+const previousBtn = document.querySelector('.previous');
+const error = document.querySelector('#error');
+const password = document.querySelector('#password');
+const  confirm = document.querySelector('#confirm'),
+   email = document.querySelector('#email'),
+   nameInput = document.getElementById('name');
+const dobInput = document.getElementById('dob');
+const today = new Date().toISOString().split('T')[0]; // formats as "YYYY-MM-DD"
+dobInput.max = today;
+
+  const weightInput = document.getElementById("weight");
+  const weightError = document.getElementById("weight-error");
+
+  weightInput.addEventListener("input", () => {
+    const value = parseFloat(weightInput.value);
+
+    if (value < 40 || value > 130 || isNaN(value)) {
+      weightError.textContent = "Please enter a realistic weight.";
+      weightError.style.display = "block";
+      weightInput.setCustomValidity("Invalid weight");
+    } else {
+      weightError.textContent = "";
+      weightError.style.display = "none";
+      weightInput.setCustomValidity("");
+    }
+  });
+
+  const strengthMeter = document.createElement('div');
+password.parentNode.insertBefore(strengthMeter, password.nextSibling);
+
+password.addEventListener('input', () => {
+  const val = password.value;
+  let strength = 'Weak';
+  if (val.length > 8 && /[A-Z]/.test(val) && /\d/.test(val) && /[^A-Za-z0-9]/.test(val)) {
+    strength = 'Strong';
+  } else if (val.length > 8) {
+    strength = 'Moderate';
+  }
+  strengthMeter.className = 'strength-meter';
+
+  if (strength === 'Weak') {
+    strengthMeter.style.color = 'red';
+  } else if (strength === 'Moderate') {
+    strengthMeter.style.color = 'orange';
+  } else {
+    strengthMeter.style.color = 'green';
+  }
+
+  strengthMeter.textContent = `Password Strength: ${strength}`;
+});
+
+
+nameInput.focus();
+let currentStep = 0;
+const steps = ['.name-weight', '.gender-interested', '.xtras', '.password-box'];
+
+// Show the correct step and adjust button visibility
+function showStep(index) {
+  document.getElementById('progressBar').style.width = ((index + 1) / steps.length * 100) + '%';
+  steps.forEach((selector, i) => {
+    const section = document.querySelector(selector);
+    section.style.display = i === index ? 'block' : 'none';
+  });
+
+  previousBtn.style.display = index > 0 ? 'inline-block' : 'none';
+  nextBtn.style.display = index < steps.length - 1 ? 'inline-block' : 'none';
+  submitBtn.style.display = index === steps.length - 1 ? 'inline-block' : 'none';
+
+  validateStep(); // revalidate inputs for current step
+}
+
+// Validate only the current step's visible inputs
+function validateStep() {
+  const currentInputs = document.querySelectorAll(steps[currentStep] + ' input, ' + steps[currentStep] + ' select');
+  const allFilled = Array.from(currentInputs).every(input => input.value.trim() !== '');
+  nextBtn.disabled = currentStep < steps.length - 1 && !allFilled;
+  submitBtn.disabled = currentStep === steps.length - 1 && !allFilled;
+}
+
+// Input listeners
+document.querySelectorAll('input, select').forEach(input => {
+  input.addEventListener('input', validateStep);
+});
+
+// Handle Next button
+nextBtn.addEventListener('click', () => {
+  if (currentStep < steps.length - 1) {
+    currentStep++;
+    showStep(currentStep);
+  }
+});
+
+// Handle Previous button
+previousBtn.addEventListener('click', () => {
+  if (currentStep > 0) {
+    currentStep--;
+    showStep(currentStep);
+  }
+});
+
+// Initial render
+showStep(currentStep);
+  const areaSelect = document.getElementById("location");
+  const citySelect = document.getElementById("city");
+
+  const locationMap = {
+    Nairobi: [
+      "Kilimani", "Westlands", "Karen", "CBD", "Roysambu", "Ngara", "Donholm", "Nairobi West","Donholm", "Dandora", "Ojijo", "Yaya", "Sarit",
+      "Ruaka", "Syokimau", "Kitengela", "Embakasi", "South B", "South C", "Lavington", "Parklands"
+    ],
+    Kiambu: [
+      "Juja", "Kikuyu", "Ruiru", "Githurai",
+      "Thika", "Limuru", "Kabete", "Tigoni"
+    ],
+    Mombasa: [
+      "Diani", "Nyali", "Likoni",
+      "Mtwapa", "Bamburi", "Shanzu", "Kisauni"
+    ],
+    Nakuru: [
+      "Naivasha", "Nakuru Town", "Gilgil",
+      "Lanet", "Njoro", "Pipeline", "Kabarak"
+    ],
+    Kisumu: [
+      "Kisumu Town",
+      "Milimani", "Riat Hills", "Mamboleo", "Manyatta"
+    ],
+    Eldoret: [
+      "Eldoret Town", "Langas",
+      "Kapsoya", "Elgon View", "Annex", "Pioneer"
+    ],
+    Machakos: [
+      "Athi River", "Kangundo", "Joska", "Mwala", "Syokimau"
+    ],
+    Laikipia: [
+      "Nanyuki", "Rumuruti", "Timau"
+    ],
+    Kajiado: [
+      "Ongata Rongai", "Kitengela", "Ngong", "Kiserian"
+    ],
+    Kilifi: [
+      "Kilifi Town", "Malindi", "Watamu", "Mtwapa"
+    ],
+    UasinGishu: [
+      "Eldoret", "Turbo", "Moiben"
+    ],
+    Kisii: [
+      "Kisii Town", "Nyanchwa", "Suneka"
+    ],
+    Kakamega: [
+      "Kakamega Town", "Shinyalu", "Lurambi"
+    ]
+};
+
+
+  citySelect.addEventListener("change", () => {
+    const selectedCity = citySelect.value;
+    const areas = [...new Set(locationMap[selectedCity] || [])]; //this diduplicating as a case where donholm is twice in nairobi
+
+    // Reset area dropdown
+    areaSelect.innerHTML = '<option value="" disabled selected hidden>Select Area</option>';
+
+    // Populate area dropdown
+    areas.forEach(area => {
+      const option = document.createElement("option");
+      option.value = area;
+      option.textContent = area;
+      areaSelect.appendChild(option);
+    });
+  });
+
+  const errorDiv = document.getElementById('dob-error');
+  dobInput.addEventListener('change', () => {
+    const dob = new Date(dobInput.value);
+    const now = new Date();
+
+    const age = now.getFullYear() - dob.getFullYear();
+    const m = now.getMonth() - dob.getMonth();
+    const d = now.getDate() - dob.getDate();
+
+    const isOldEnough = (age > 18) || (age === 18 && (m > 0 || (m === 0 && d >= 0)));
+
+    if (!isOldEnough) {
+      errorDiv.innerText = "You must be at least 18 years old.";
+      errorDiv.style.display = "block";
+      dobInput.setCustomValidity("Invalid"); // Prevent form submission
+    } else {
+      errorDiv.innerText = "";
+      errorDiv.style.display = "none";
+      dobInput.setCustomValidity(""); // Allow form submission
+    }
+  });
+
+// Submit handler
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  error.innerText = '';
+
+  // 1) Client-side password checks
+  const pass = password.value.trim();
+  const confirmPass = confirm.value.trim();
+  if (!pass || pass.length <= 8) {
+    return error.innerText = 'Password is too short!';
+  }
+  if (pass !== confirmPass) {
+   return error.innerText = "Passwords do not match"
+}
+  if(!validateEmail(email.value)) {
+    return error.innerText = 'Email not valid!'
+  }
+
+  // 2) Show spinner + disable
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting...';
+
+  // 3) Collect form data
+  const formData = new FormData(form);
+  const formObj = {};
+  formData.forEach((value, key) => {
+    if (formObj[key]) {
+    // Turn single value into array or push additional selections
+      formObj[key] = [].concat(formObj[key], value);
+  } else {
+      formObj[key] = value;
+  }
+});
+
+  try {
+    const res = await fetch('/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(formObj)
+    });
+
+    // 4) Handle non-2xx HTTP
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || 'Server responded with ' + res.status);
+    }
+
+    // 5) Parse JSON and check your success flag
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(data.message || 'Registration failed');
+    }
+
+    // 6) On success, redirect
+    window.location.href = '/profile';
+  } catch (err) {
+    console.log(err);
+    error.innerText = err.message || 'Submission failed. Please try again.';
+      
+    } finally {
+    // 7) Always re-enable & reset button label
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = 'SUBMIT';
+  }
+});
+
+function validateEmail(emailInput) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  return regex.test(emailInput.trim());
+}
+
+
+</script>
+</body>
+</html>

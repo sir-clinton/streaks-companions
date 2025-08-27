@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="icon" href="/public/images/favicon.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="icon" href="/favicon.ico">
+    <script src="https://kit.fontawesome.com/abc123xyz.js" crossorigin="anonymous"></script>
+    <title>Escort's Analytics.</title>
+    <style>
+      *{
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      body {
+  margin: 0;
+  padding: 0;
+  background: #f9f9f9; /* matches dashboard background */
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.dashboard-box {
+  width: 100%;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+  margin: auto;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#dateRange {
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+}
+
+#profileViewsChart {
+  width: 100% !important;
+  max-width: 100%;
+  height: auto !important;
+  display: block;
+}
+
+.total-views-badge,
+.views-tooltip {
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+.progress-day {
+  margin-bottom: 0.5rem;
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.progress-bar {
+  background: #eee;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #00b894, #55efc4);
+  width: 0%;
+  transition: width 0.7s ease-out, background 0.4s ease;
+}
+.progress-day:hover .progress-fill {
+  background: linear-gradient(to right, #00cec9, #81ecec);
+}
+/* Toggle Switch Styles */
+.switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  width: 50px;
+  height: 26px;
+  background: #ccc;
+  border-radius: 50px;
+  position: relative;
+  transition: background 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 3px;
+  left: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+input:checked + .slider {
+  background: #00b894;
+}
+
+input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+.switch-label {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  .dashboard-box {
+    padding: 0.75rem;
+  }
+
+  #profileViewsChart {
+    max-height: 250px;
+  }
+
+  .total-views-badge {
+    font-size: 0.9rem;
+  }
+
+  .views-tooltip {
+    font-size: 0.9rem;
+  }
+}
+
+    </style>
+</head>
+<body>
+<div class="dashboard-box">
+  <h2>Profile Insights</h2>
+  <input type="text" id="dateRange" placeholder="Select date range"><br><br>
+  <div><i class="fas fa-eye"></i> Total Views: <strong id="totalViewsCount">0</strong></div>
+      
+  <canvas id="profileViewsChart" style="max-height: 300px;"></canvas>
+  <div id="noDataMessage" style="text-align:center; margin-top:0.5rem; font-size:0.9rem; color:#999;"></div>
+  <h3 style="margin: 16px 0; color: #333;">Profile Engagement (Top 3 days)</h3>
+  <div id="topDaysProgress" style="margin-top:1rem;"></div><br>
+<label class="switch" aria-label="Toggle location sharing">
+  <input type="checkbox" id="locationToggle">
+  <span class="slider"></span>
+  <span class="switch-label">Share my location</span>
+</label>
+
+
+
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('locationToggle').addEventListener('change', function(e) {
+  const enabled = e.target.checked;
+  localStorage.setItem('locationSharingEnabled', JSON.stringify(enabled));
+
+  if (enabled && navigator.geolocation) {
+    try {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          console.log("User location:", latitude, longitude);
+
+          fetch('/save-location', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ latitude, longitude })
+          }).catch(fetchError => {
+            console.error("Failed to send location:", fetchError);
+          });
+        },
+        geoError => {
+          console.error("Geolocation error:", geoError.message);
+        }
+      );
+    } catch (err) {
+      console.error("Unexpected error while getting location:", err);
+    }
+  }
+});
+
+const savedState = JSON.parse(localStorage.getItem('locationSharingEnabled'));
+if (savedState === true) {
+  const locationToggle = document.getElementById('locationToggle');
+  locationToggle.checked = true;
+
+  // Optional: Automatically re-fetch location if desired
+  locationToggle.dispatchEvent(new Event('change'));
+}
+
+  const end = new Date(); // today
+  const start = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
+  fetchAnalytics(start, end);
+});
+
+flatpickr("#dateRange", {
+  mode: "range",
+  dateFormat: "Y-m-d",
+  onClose: function(selectedDates) {
+    const [start, end] = selectedDates;
+    if (start && end) {
+      fetchAnalytics(start, end);
+    }
+  }
+});
+const now = Date.now();
+const thirtyMinutes = 30 * 60 * 1000;
+
+async function fetchAnalytics(startDate, endDate) {
+  const cacheKey = `analyticsCache_${startDate.toISOString()}_${endDate.toISOString()}`;
+const cached = localStorage.getItem(cacheKey);
+
+if (cached) {
+  const { timestamp, data } = JSON.parse(cached);
+  if (now - timestamp < thirtyMinutes) {
+    renderChart(data);
+    return;
+  }
+}
+
+
+  try {
+    const escortId = window.location.pathname.split('/').pop();
+    if (!startDate || !endDate || isNaN(startDate) || isNaN(endDate)) return;
+
+    const res = await fetch(`/analytics/${escortId}?start=${startDate.toISOString()}&end=${endDate.toISOString()}`);
+    const data = await res.json();
+
+    if (!data.views || data.views.length === 0 || !Array.isArray(data.views)) {
+      document.getElementById('noDataMessage').textContent = '📭 No views recorded.';
+      return;
+    }
+
+    localStorage.setItem(cacheKey, JSON.stringify({
+  timestamp: now,
+  data: data.views
+}));
+
+    renderChart(data.views);
+  } catch (err) {
+    console.error('Failed to fetch analytics:', err);
+  }
+}
+
+function renderChart(viewData) {
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const sorted = [...viewData].sort((a, b) => b.count - a.count).slice(0, 3);
+  console.log(sorted);
+  const progressContainer = document.getElementById('topDaysProgress');
+  progressContainer.innerHTML = ''; // clear previous
+
+const maxCount = sorted[0]?.count || 1;
+
+sorted.forEach(({ _id, count }) => {
+  const { day, month, year } = _id;
+  const label = `${monthNames[month - 1]} ${day}`;
+  const percent = Math.round((count / maxCount) * 100);
+  
+  const bar = document.createElement('div');
+  bar.className = 'progress-day';
+  bar.innerHTML = `
+    <div class="progress-label">${label} — ${count} views</div>
+    <div class="progress-bar">
+      <div class="progress-fill" style="width:${percent}%"></div>
+    </div>
+  `;
+
+  // Make bar clickable for single-day filtering
+  bar.style.cursor = 'pointer';
+  bar.addEventListener('click', () => {
+  const selectedDate = new Date(year, month - 1, day);
+  const startOfDay = new Date(selectedDate.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(selectedDate.setHours(23, 59, 59, 999));
+  fetchAnalytics(startOfDay, endOfDay);
+});
+
+  progressContainer.appendChild(bar);
+});
+
+
+  const labels = [];
+  const viewCounts = [];
+
+  viewData.forEach(v => {
+  const { day, month } = v._id;
+  const monthName = monthNames[month - 1];
+  labels.push(`${monthName} ${day}`);
+  viewCounts.push(v.count);
+});
+
+  if (viewCounts.length === 0) {
+    labels.push('No Data');
+    viewCounts.push(0);
+  }
+
+  const total = viewCounts.reduce((a, b) => a + b, 0);
+  document.getElementById('totalViewsCount').textContent = total;
+
+  const ctx = document.getElementById('profileViewsChart').getContext('2d');
+  if (window.profileChart) window.profileChart.destroy();
+
+  const isEmpty = labels.length === 1 && labels[0] === 'No Data';
+  document.getElementById('noDataMessage').textContent = isEmpty
+    ? '📭 No activity recorded during this period.'
+    : '';
+
+  window.profileChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        animation: {
+          duration: 500,
+          easing: 'easeOutQuad'
+        },
+        label: 'Profile Views',
+        data: viewCounts,
+        borderColor: isEmpty ? 'rgba(150,150,150,0.8)' : '#00b894',
+        backgroundColor: isEmpty ? 'rgba(150,150,150,0.1)' : 'rgba(0,184,148,0.1)',
+        borderDash: isEmpty ? [5, 5] : [],
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Profile Engagement' }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /admin
+Disallow: /profile
+Disallow: /login
+Allow: /
+
+
+Sitemap: https://streak-1.onrender.com/sitemap.xml
+

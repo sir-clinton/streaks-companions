@@ -1,0 +1,52 @@
+app.post('/filter', async (req, res) => {
+  const { gender, city, sortBy } = req.body;
+
+  if (!city || !gender) {
+    return res.status(400).json({ success: false, message: 'Missing gender or city filter' });
+  }
+
+  try {
+    // Fetch escorts matching filters
+    let escorts = await Escort.find({
+      city: { $regex: new RegExp(`^${city}$`, 'i') },
+      gender: gender
+    }).lean();
+
+    // Apply profile verification check
+    escorts = escorts.filter(escort =>
+      escort.about &&
+      escort.userImg &&
+      escort.name &&
+      escort.location
+    );
+
+    // Sorting logic
+    switch (sortBy) {
+      case 'rating':
+        escorts.sort((a, b) => b.ratings - a.ratings);
+        break;
+      case 'name':
+        escorts.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'latest':
+        escorts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        break;
+      default:
+        // Default: shuffle randomly
+        for (let i = escorts.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [escorts[i], escorts[j]] = [escorts[j], escorts[i]];
+        }
+        break;
+    }
+
+    if (escorts.length === 0) {
+      return res.status(404).json({ success: false, message: 'No verified escorts match that filter' });
+    }
+
+    return res.json({ success: true, results: escorts });
+  } catch (err) {
+    console.error('Filter error:', err);
+    return res.status(500).json({ success: false, message: 'Server error while filtering' });
+  }});
+In this filtering logic you can use "SortBy" automatically (user will not be able to choose for themselves this is for the system) so as to know which rating preferences they like to recommend in future

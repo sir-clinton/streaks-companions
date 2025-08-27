@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Boost Today || StreakStar</title>
+  <style>
+    body {
+      background-color: #111;
+      font-family: 'Inter', sans-serif;
+      color: #e4e4e4;
+      padding: 2rem;
+      line-height: 1.5;
+    }
+
+    form {
+      max-width: 480px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(255, 0, 100, 0.2);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      color: #f0f0f0;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #292929;
+      color: #ffffff;
+      font-size: 0.95rem;
+    }
+
+    input::placeholder {
+      color: #aaaaaa;
+    }
+
+    button {
+      background: linear-gradient(90deg, #ff0066, #ff5500);
+      color: #fff;
+      padding: 0.85rem 1.4rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #ff0050, #ff3300);
+    }
+
+    form h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      color: #25D366;
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      justify-content: center;
+    }
+
+    .toggle-group label {
+      background-color: #292929;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .toggle-group input[type="radio"] {
+      display: none;
+    }
+
+    .toggle-group input[type="radio"]:checked + span {
+      background-color: #ff0066;
+      color: #fff;
+    }
+
+    .toggle-group span {
+      display: inline-block;
+      font-size: 0.95rem;
+    }
+
+    p.note {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <form action="/boost-request" method="POST">
+    <h2>Boost Visibility Request</h2>
+
+    <label for="boostCycle">Boost Duration:</label>
+    <div class="toggle-group">
+      <label>
+        <input type="radio" name="boostCycle" value="weekly" id="weeklyCycle" checked />
+        <span>Weekly</span>
+      </label>
+      <label>
+        <input type="radio" name="boostCycle" value="monthly" id="monthlyCycle" />
+        <span>Monthly</span>
+      </label>
+    </div>
+
+    <label for="boostType">Boost Type:</label>
+    <select name="boostType" id="boostType" required>
+      <option value="bronze-weekly">Bronze – 100 Sh/week</option>
+      <option value="silver-weekly">Silver – 200 Sh/week</option>
+      <option value="gold-weekly">Gold – 300 Sh/week</option>
+    </select>
+
+    <label for="areaLabel">Location:</label>
+    <input type="text" name="areaLabel" placeholder="Kilimani / Lang’ata" required />
+
+    <label for="mpesaRef">Mpesa Ref Code:</label>
+    <input type="text" name="mpesaRef" placeholder="Ref123ABC" required />
+
+    <button type="submit">Submit Boost</button>
+    <p class="note">🔒 Secure. No personal data required.</p>
+  </form>
+
+  <script>
+    const boostCycleRadios = document.querySelectorAll('input[name="boostCycle"]');
+    const boostTypeSelect = document.getElementById('boostType');
+
+    const options = {
+      weekly: [
+        { value: 'bronze-weekly', label: 'Bronze – 100 Sh/week' },
+        { value: 'silver-weekly', label: 'Silver – 200 Sh/week' },
+        { value: 'gold-weekly', label: 'Gold – 300 Sh/week' }
+      ],
+      monthly: [
+        { value: 'bronze-monthly', label: 'Bronze – 400 Sh/month' },
+        { value: 'silver-monthly', label: 'Silver – 800 Sh/month' },
+        { value: 'gold-monthly', label: 'Gold – 1200 Sh/month' }
+      ]
+    };
+
+    boostCycleRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        const cycle = radio.value;
+        boostTypeSelect.innerHTML = '';
+        options[cycle].forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt.value;
+          option.textContent = opt.label;
+          boostTypeSelect.appendChild(option);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

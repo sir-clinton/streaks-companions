@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agency Registration</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Satoshi', sans-serif;
+    }
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .agency-register-box {
+      background-color: #fff;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+      border-radius: 8px;
+    }
+    .agency-register-box h3 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      text-align: center;
+    }
+    form input, form select, form textarea, form button {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    form button {
+      background-color: #25D366;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    form button:hover {
+      background-color: #128C7E;
+    }
+    #error {
+      color: red;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="agency-register-box">
+    <h3>Register Your Agency</h3>
+    <form id="agencyForm">
+      <input type="text" name="agencyName" placeholder="Agency Name" required />
+      <input type="email" name="agencyEmail" placeholder="Agency Email" required />
+      <input type="tel" name="phone" placeholder="Contact Number" required />
+      
+      <select name="city" id="city" required>
+        <option value="" disabled selected hidden>Select City</option>
+        <option value="Nairobi">Nairobi</option>
+        <option value="Kiambu">Kiambu</option>
+        <option value="Mombasa">Mombasa</option>
+        <option value="Kisumu">Kisumu</option>
+        <option value="Nakuru">Nakuru</option>
+        <option value="Eldoret">Eldoret</option>
+        <option value="Machakos">Machakos</option>
+        <option value="Laikipia">Laikipia</option>
+        <option value="Kajiado">Kajiado</option>
+        <option value="Kilifi">Kilifi</option>
+        <option value="UasinGishu">UasinGishu</option>
+        <option value="Kisii">Kisii</option>
+        <option value="Kakamega">Kakamega</option>
+      </select>
+
+      <select name="areaLabel" id="location" required>
+        <option value="" disabled selected hidden>Select Area</option>
+      </select>
+
+      <textarea name="description" placeholder="Brief description of your agency" rows="4"></textarea>
+      <input type="password" name="password" id="password" placeholder="Create Password" required />
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+      <p id="error"></p>
+      <button type="submit">Register Agency</button>
+    </form>
+  </div>
+
+  <script>
+    const locationMap = {
+      Nairobi: ["Kilimani", "Westlands", "Karen", "CBD", "Roysambu", "Ngara", "Donholm", "Nairobi West", "Dandora", "Ojijo", "Yaya", "Sarit", "Ruaka", "Syokimau", "Kitengela", "Embakasi", "South B", "South C", "Lavington", "Parklands"],
+      Kiambu: ["Juja", "Kikuyu", "Ruiru", "Githurai", "Thika", "Limuru", "Kabete", "Tigoni"],
+      Mombasa: ["Diani", "Nyali", "Likoni", "Mtwapa", "Bamburi", "Shanzu", "Kisauni"],
+      Nakuru: ["Naivasha", "Nakuru Town", "Gilgil", "Lanet", "Njoro", "Pipeline", "Kabarak"],
+      Kisumu: ["Kisumu Town", "Milimani", "Riat Hills", "Mamboleo", "Manyatta"],
+      Eldoret: ["Eldoret Town", "Langas", "Kapsoya", "Elgon View", "Annex", "Pioneer"],
+      Machakos: ["Athi River", "Kangundo", "Joska", "Mwala", "Syokimau"],
+      Laikipia: ["Nanyuki", "Rumuruti", "Timau"],
+      Kajiado: ["Ongata Rongai", "Kitengela", "Ngong", "Kiserian"],
+      Kilifi: ["Kilifi Town", "Malindi", "Watamu", "Mtwapa"],
+      UasinGishu: ["Eldoret", "Turbo", "Moiben"],
+      Kisii: ["Kisii Town", "Nyanchwa", "Suneka"],
+      Kakamega: ["Kakamega Town", "Shinyalu", "Lurambi"]
+    };
+
+    const citySelect = document.getElementById("city");
+    const areaSelect = document.getElementById("location");
+    const form = document.getElementById("agencyForm");
+    const error = document.getElementById("error");
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirmPassword");
+
+    citySelect.addEventListener("change", () => {
+      const selectedCity = citySelect.value;
+      const areas = locationMap[selectedCity] || [];
+
+      areaSelect.innerHTML = '<option value="" disabled selected hidden>Select Area</option>';
+      areas.forEach(area => {
+        const option = document.createElement("option");
+        option.value = area;
+        option.textContent = area;
+        areaSelect.appendChild(option);
+      });
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      error.innerText = "";
+
+      if (password.value.length < 8) {
+        error.innerText = "Password must be at least 8 characters.";
+        return;
+      }
+
+      if (password.value !== confirmPassword.value) {
+        error.innerText = "Passwords do not match.";
+        return;
+      }
+
+      const formData = new FormData(form);
+      const formObj = {};
+      formData.forEach((value, key) => {
+        formObj[key] = value;
+      });
+
+      try {
+        const res = await fetch("/register-agency", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(formObj)
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "Registration failed.");
+        }
+
+        alert("Agency registered successfully!");
+        window.location.href = "/agency-dashboard";
+      } catch (err) {
+        error.innerText = err.message || "Something went wrong.";
+      }
+    });
+  </script>
+</body>
+</html>

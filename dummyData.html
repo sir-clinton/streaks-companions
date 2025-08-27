@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Escort Dummy Entry</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      padding: 2rem;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 2rem;
+      padding: 0.8rem 1.5rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<form id="escortForm">
+  <h2>Escort  Data Entry</h2>
+
+  <label>Name</label>
+  <input type="text" name="name" required />
+
+  <label>Profile Image</label>
+  <input type="file" name="userImg" accept="image/*" required />
+
+  <label>Email</label>
+  <input type="email" name="email" required />
+
+  <label>Phone</label>
+  <input type="text" name="phone" required />
+
+  <label>Date of Birth</label>
+  <input type="date" name="dob" required />
+
+  <label>Gender</label>
+  <select name="gender" required>
+    <option value="">Select Gender</option>
+    <option value="Female">Female</option>
+    <option value="Male">Male</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <label>Orientation</label>
+  <select name="orientation" required>
+    <option value="">Select Orientation</option>
+    <option value="straight">Straight</option>
+    <option value="gay">Gay</option>
+    <option value="bisexual">Bisexual</option>
+  </select>
+
+  <label>Weight (kg)</label>
+  <input type="number" name="weight" required />
+
+  <label>City</label>
+  <select name="city" id="citySelect" required>
+    <option value="">Select City</option>
+  </select>
+
+  <label>Area Label</label>
+  <select name="areaLabel" id="areaSelect" required>
+    <option value="">Select Area</option>
+  </select>
+
+  <label>Coordinates (longitude, latitude)</label>
+  <input type="text" name="coordinates" placeholder="e.g. 36.8223,-1.3078" required />
+
+  <label>Services</label>
+  <select name="services" multiple required>
+    <option value="Dinner Date">Dinner Date</option>
+    <option value="Travel Companion">Travel Companion</option>
+    <option value="Massage">Massage</option>
+    <option value="GFE">GFE</option>
+    <option value="Anal">Anal</option>
+    <option value="3 Some">3 Some</option>
+  </select>
+
+  <button type="submit">Submit Escort</button>
+</form>
+
+<script>
+  const locationMap = {
+    Nairobi: ["Kilimani", "Westlands", "Karen", "CBD", "Roysambu", "Ngara", "Donholm", "Nairobi West", "Dandora", "Ojijo", "Yaya", "Sarit", "Ruaka", "Syokimau", "Kitengela", "Embakasi", "South B", "South C", "Lavington", "Parklands"],
+    Kiambu: ["Juja", "Kikuyu", "Ruiru", "Githurai", "Thika", "Limuru", "Kabete", "Tigoni"]
+  };
+
+  const citySelect = document.getElementById('citySelect');
+  const areaSelect = document.getElementById('areaSelect');
+
+  Object.keys(locationMap).forEach(city => {
+    const opt = document.createElement('option');
+    opt.value = city;
+    opt.textContent = city;
+    citySelect.appendChild(opt);
+  });
+
+  citySelect.addEventListener('change', () => {
+    const areas = locationMap[citySelect.value] || [];
+    areaSelect.innerHTML = '<option value="">Select Area</option>';
+    areas.forEach(area => {
+      const opt = document.createElement('option');
+      opt.value = area;
+      opt.textContent = area;
+      areaSelect.appendChild(opt);
+    });
+  });
+
+  document.getElementById('escortForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+
+  const file = form.userImg.files[0];
+  const reader = new FileReader();
+
+  reader.onloadend = async () => {
+    const base64Image = reader.result;
+
+    const data = {
+      name: form.name.value,
+      email: form.email.value,
+      phone: form.phone.value,
+      dob: form.dob.value,
+      gender: form.gender.value,
+      orientation: form.orientation.value,
+      weight: form.weight.value,
+      city: form.city.value,
+      areaLabel: form.areaLabel.value,
+      location: {
+        type: "Point",
+        coordinates: form.coordinates.value.split(',').map(Number)
+      },
+      services: Array.from(form.services.selectedOptions).map(opt => opt.value),
+      allowedtopost: true,
+      userImg: base64Image
+    };
+
+    try {
+      const res = await fetch('/api/escorts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      alert('Escort submitted successfully!');
+      form.reset();
+    } catch (err) {
+      console.error('Submission error:', err);
+      alert('Failed to submit escort.');
+    }
+  };
+
+  if (file) {
+    reader.readAsDataURL(file);
+  } else {
+    alert('Please upload an image.');
+  }
+});
+
+</script>
+</body>
+</html>

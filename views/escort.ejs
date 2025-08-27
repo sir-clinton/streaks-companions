@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= loggedInEscort.name %></title>
+    <link rel="icon" href="/public/images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="/css/styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">   
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            padding: 36px 12px;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        h2 {
+            color: #333;
+            padding: 12px 0;
+        }
+       
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        a {
+            color: #25D366;
+            text-decoration: none;
+        }
+        
+        .badge {
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+        padding: 6px 12px;
+        border-radius: 12px;
+        transition: opacity 0.3s ease;
+        display: inline-block;
+        font-weight: 600;
+        }
+
+        .alert-badge {
+        background-color: #d94a4a;
+        border: 1px solid #f8bcbc;
+        }.alert-badge .fa-exclamation-circle{
+            color: #b40000;
+        }
+
+        .success-badge {
+        background-color: #dbffdb;
+        color: #206820;
+        border: 1px solid #9ed29e;
+        }
+
+        .tooltip {
+        position: relative;
+        cursor: pointer;
+        }
+
+        .tooltip-text {
+        visibility: hidden;
+        background-color: #222;
+        color: #fff;
+        text-align: center;
+        padding: 8px;
+        border-radius: 6px;
+        position: absolute;
+        top: 120%;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        z-index: 10;
+        font-size: 0.8rem;
+        }
+
+        .tooltip:hover .tooltip-text {
+        visibility: visible;
+        }
+    
+        .gallery {
+            display: flex;
+            background: #f0f0f0;
+            width: fit-content;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }.gallery img {
+            width: 100px;
+            height: 100px;
+            flex: 50%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .similar-escorts {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .similar-escort {
+            margin-right: 20px;
+            text-align: center;
+        }
+        .similar-escort img {
+            border-radius: 5px;
+        }
+        .similar-escort p {
+            margin-top: 5px;
+            color: #555;
+        }
+        .similar-escort a {
+            color: #25D366;
+            text-decoration: none;
+        }
+        .similar-escort a:hover {
+            text-decoration: underline;
+        }.profile-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0;
+            background-color:   #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }@media (max-width: 600px) {
+            .profile-container{
+                width: 100%;
+                max-width: 580px;
+            }.profile-content-wrapper {
+                flex-direction: column;
+            }.profile-content-wrapper .display-mode, 
+            .profile-content-wrapper .edit-mode {
+                flex-direction: column;
+            }
+            .left, .right {
+                flex: 1;
+            
+        }
+        }
+        .profile-content-wrapper {
+            display: flex;
+            /* padding: 32px 0; */
+            flex-direction: column;
+        }.profile-content-wrapper .left {
+            flex: 50%;
+        }.profile-content-wrapper .right {
+            flex: 50%;
+        }
+        img {
+            width: 100%;
+            max-width: 150px;
+            height: auto;
+        }.right h3, .left h2 {
+            margin-bottom: 10px;
+        }.right p, .left p {
+            margin-bottom: 15px;
+        }li a i.fab{
+            display: inline-block;
+            font-size: 2rem;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            background: transparent;
+            color: black;
+            transition: .5s;
+             outline: none;
+            cursor: pointer;
+        }
+        /*.right ul {
+            padding-left: 20px;
+        }*/.right ul li { 
+            margin-bottom: 5px;
+        }.name{
+                font-size: .8em;
+                color: #333;
+                white-space: nowrap;}
+                
+                .img-wrapper {
+                    border-radius: 50%;
+                    background: #f0f0f0;
+                    padding: 2px;
+                    border: 1px solid white;
+                    /* overflow: hidden !important; */
+                    width: 100px;
+                    cursor: pointer;
+                    position: relative;
+                    height: 100px;
+                }.img-wrapper img{
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 50% !important;
+                    object-fit: cover;
+                }
+                .img-wrapper::after{
+                    content: '+';
+                    position: absolute;
+                    top: 70%;
+                    right: 0;
+                    z-index: 99999;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: 1.5rem;
+                    border-radius: 50%;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                    width: 24px;
+                    height: 24px;
+                    background-color: #25D366;
+                    color: white;}
+                    .img-wrapper:hover::after {
+                        transform: scale(1.1);
+                        transition: transform 0.2s ease;
+                        }
+
+            /* } .bar {
+                background-color: #fff;
+            } */
+             /* Inline Edit Mode Layout */
+            .edit-mode {
+                display: none;
+                background: linear-gradient(to bottom right, #f8f9fa, #e2e6ea); /* Soft grayscale gradient */
+                border-radius: 12px;
+                padding: 20px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                margin: 20px 0;
+            }.edit-mode,
+            .display-mode {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                gap: 20px;
+                overflow-y: scroll;
+                scrollbar-width: none;
+                -ms-overflow-style: none; /* IE and Edge */
+                -webkit-overflow-scrolling: touch;
+                /* //added code */
+                scrollbar-width: thin;
+                scrollbar-color:  #ccc transparent;
+            }.edit-mode::-webkit-scrollbar {
+              width: 6px;
+            }
+            .edit-mode::-webkit-scrollbar-thumb {
+              background-color: #ccc;
+              border-radius: 6px;
+            }
+
+            .display-mode .right h2{
+                margin-bottom: 20px;
+            }
+            .edit-mode input[type="text"],
+            .edit-mode input[type="email"],
+            .edit-mode input[type="url"],
+            .edit-mode textarea {
+                width: 100%;
+                padding: 8px 10px;
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                font-size: 1rem;
+                background-color: #fff;
+                box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+            }
+
+            .profile-content-wrapper .edit-buttons {
+                margin: 16px 0;
+                display: flex;
+                gap: 10px;
+            }
+            .profile-content-wrapper .edit-buttons button,
+                .profile-content-wrapper .edit-btn {
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                display: inline-block;
+                margin: 10px 0;
+                font-weight: bold;
+                cursor: pointer;
+                font-size: 0.9rem;
+                transition: all 0.2s ease;
+            } button:disabled {
+                background-color: #aaa;
+                cursor: not-allowed;
+                opacity: 0.6;
+                box-shadow: none;
+                }
+
+            .profile-content-wrapper .edit-buttons .save-btn, 
+            .profile-content-wrapper .edit-buttons + .edit-btn {
+                background-color: #25D366;
+                    color: white;
+            }
+            /* remember in future to add this for login page  */
+            .save-btn:active {
+              transform: scale(0.97);
+              box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+            }
+
+            .profile-content-wrapper .edit-buttons .save-btn:hover {
+                background-color: #1aa85b;
+            }
+
+            .profile-content-wrapper .edit-buttons .cancel-btn {
+                background-color: #f0f0f0;
+                color: #333;
+            }
+            .profile-content-wrapper .edit-buttons .cancel-btn:hover {
+                background-color: #e0e0e0;
+            }
+
+        @media (min-width: 768px) {
+            .profile-container{
+                width: 100%;
+                max-width: 970px;
+            }
+              .profile-content-wrapper {
+                flex-direction: column;
+              }
+            /* .profile-content-wrapper  {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-between !important;
+                align-items: center;
+            } */
+            .profile-content-wrapper .display-mode, 
+            .profile-content-wrapper .edit-mode {
+                flex-direction: row !important; 
+                gap: 80px;
+            }
+            .left{
+                flex: 1;
+            }.right{
+                flex: 1;
+            }
+        }@media(min-width: 1024px) {
+            /* .profile-content-wrapper {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-between !important;
+                align-items: center;
+            } */
+            .profile-content-wrapper .display-mode, 
+            .profile-content-wrapper .edit-form {
+                flex-direction: row !important; 
+                gap: 140px;
+            }
+            .left{
+                flex: 1;
+            }.right{
+                flex: 1;
+            }
+        }
+        
+    .toast-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #25D366;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 999;
+}
+.toast-message.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.edit-mode,
+.display-mode {
+    padding: 8px 20px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.edit-mode.hide,
+.display-mode.hide {
+  opacity: 0;
+  transform: scale(0.98);
+  pointer-events: none;
+}#nav .nav-item  #browse-escorts-submenu{
+    display: none;
+}.profile-links .profile-menu{
+    display: flex;
+    max-width: 80%;
+    min-width: 400px;
+    padding: 28px 0;
+    justify-content: center;
+    margin: auto;
+    gap: 16px;
+}.profile-menu li a:hover{
+    text-decoration: underline;
+}@media (max-width : 768px){
+    .profile-menu{
+        padding: 20px 0;
+    }
+}
+.img-placeholder {
+  position: absolute;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  inset: 0;
+  background: rgba(0, 0, 0, .6);
+  z-index: 9999;
+  opacity: .8;
+  pointer-events: none;
+  /* transition: opacity 0.5s ease; */
+}
+
+/* .img-container:hover .img-placeholder {
+  display: flex;
+  transform: scale(1.01);
+  opacity: 0.8;
+  pointer-events: auto;
+} */
+.menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #6c757d;
+}
+
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 30px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+.menu-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-dropdown li a {
+  display: block;
+  padding: 10px 15px;
+  outline: none;
+  text-decoration: none;
+  color: #333;
+}
+.menu-dropdown li a:focus {
+  background-color: #25D366;
+  color: white;
+}
+.menu-dropdown li a:hover {
+  background-color: #f0f0f0;
+}
+.back-home {
+  text-decoration: none;
+  color: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.menu-dropdown ul li a:hover {
+  background-color: #25D366;
+  color: white;
+  transition: background 0.3s ease;
+}
+@media (min-width: 768px){
+    .profile-info #home{
+        display: block;
+    }.menu-container{
+        display: block;
+    }
+}
+
+    </style>
+<link rel="stylesheet" href="/css/carousel.css">
+<link rel="stylesheet" href="/css/header.css">
+</head>
+<body>
+<!-- include('partials/header') -->
+<div id="galleryOpacity" style="background-color: rgba(0, 0, 0);">
+    <span style="cursor: pointer; position: absolute; top: 20px; right: 25px; color: white; font-size: 2.1rem" id="closeImgOpacity">&times;</span>
+    <div class="carousel" style="position: relative;">
+        <button class="slide-arrow" id="slide-arrow-prev">
+        &#8249;
+        </button>
+            <img id="carousel-image" src="" alt="Carousel Image" style="width: 100%; max-height: 80vh; object-fit: contain;">         
+        <button class="slide-arrow" id="slide-arrow-next">
+         &#8250;</button>
+    </div>
+</div>
+<div class="profile-container">
+    
+    <div class="profile-header">
+    </div>
+    <div class="profile-content-wrapper">
+        <div class="img-container" style="cursor: pointer; margin-bottom: 28px; position: relative;background-image: url(<%= loggedInEscort.backgroundImg%>);background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 210px">
+            <div class="profile-info" style="display: flex; gap: 8px; padding: 10px; color: white; font-size: .9rem; font-weight: 600; position: absolute; top: 0; left: 0; z-index: 9999999;"><span id="home"><a href="/" class="back-home"><i class="fa-solid fa-arrow-left"></i> Home</a></span><span>.</span></span><span><i class="fas fa-eye"></i>views (<%= loggedInEscort?.totalViews?.toLocaleString?.() || '0' %>)</span><span>.</span><span><i class="fa-solid fa-bookmark"></i></span></div>
+            <div class="menu-container" style="position: absolute; top: 0; right: 4px; padding: 0; z-index: 9999999;">
+            <button class="menu-trigger" onclick="toggleMenu()">
+                <i style="color: white" class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <div class="menu-dropdown" id="dropdownMenu" style="margin-right: -5px">
+                <ul>
+                <li><a href="#" id="edit-bt" class="edit-bt">Edit</a></li>
+                <li><a href="/analytics/<%= loggedInEscort._id %>">Settings</a></li>
+                <li><a href="#" id="tools" role="menuitem">Logout</a></li>
+                </ul>
+            </div>
+            </div>
+
+            <div class="img-placeholder"></div>
+            <input type="file" accept="image/*" id="editImageBg" name="backgroundImg" style="display: none;">
+            <form action="/profile/edit" method="post" id="Image-uploader" style="position: absolute; left: 2%; z-index: 99999; bottom: -20%;">
+                    <div class="img-wrapper">
+                    <input type="file" name="userImg" id="userimage" accept="image/*" style="display: none;">
+                    <img src="<%= loggedInEscort.userImg || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png' %>" alt="Profile Image">
+                </div>
+            </form>
+        </div>
+            <!-- Inside your profile-content -->
+    <div class="display-mode" id="display-mode" style="margin-top: 20px;">
+        <div class="left">
+             <% const nameParts = loggedInEscort.name.trim().split(' '); %>
+            <h3 id="name-display" style="padding: 10px 0;">Hi <%= nameParts.length > 1 ? nameParts[0] : loggedInEscort.name%></h3>
+            <p id="city-display">📍 &nbsp;<%= loggedInEscort.city %></p>
+           
+                    <div id='profile-status'>
+                    <%if (missingFields.length === 0) { %>
+                        <span class="badge success-badge tooltip">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="tooltiptext">Profile is complete</span>
+                    </span>
+                    <%} else {%>
+                        <span class="badge alert-badge tooltip">
+                        <i class="fas fa-exclamation-circle"></i>   
+                        <span class="tooltiptext">Incomplete Profile (<%= missingFields.length %>)</span>
+                        </span>
+
+                    <%}%>
+               
+                </div>
+             
+                <div class="profile-info">
+                    <p id="about-display"><%= loggedInEscort.about  || 'No description provided.' %> </p>
+                     <h3>Social Links</h3>
+                <ul>
+                    <!-- <span class="mockupText">Social Media Links</span> -->
+                                
+                <%
+                const platforms = [
+                    { key: 'instagram', prefix: 'https://instagram.com/', icon: 'instagram' },
+                    { key: 'facebook', prefix: 'https://facebook.com/', icon: 'facebook-f' },
+                    { key: 'twitter', prefix: 'https://twitter.com/', icon: 'twitter' },
+                    { key: 'tiktok', prefix: 'https://www.tiktok.com/@', icon: 'tiktok' },
+                    { key: 'snapchat', prefix: 'https://www.snapchat.com/add/', icon: 'snapchat' }
+                ];
+                %>
+
+                <div class="mockupArea2" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <% platforms.forEach(function({ key, prefix, icon }) {
+                    var username = (loggedInEscort.socialLinks && loggedInEscort.socialLinks[key])
+                    ? loggedInEscort.socialLinks[key].trim()
+                    : '';
+                    if (username) { %>
+                    <li id="<%= key %>">
+                        <a style="display: flex; align-items: center; color: #333;" href="<%= prefix + username %>" target="_blank">
+                        <i class="fab fa-<%= icon %>"></i>&nbsp;<span><%= icon %></span>
+                        </a>
+                    </li>
+                <% } }); %>
+                </div>
+
+              </ul>
+<br>
+                    <h3>Contact Information</h3><br>
+                <p><strong>Phone:</strong><span id="phone-display"> <%= loggedInEscort.phone || 'Not provided'%> </span></p>
+                
+               
+                </div>
+            <!-- Editable Fields -->
+              
+                
+        </div>
+
+            <div class="right">
+                
+                <h3>Gallery</h3>
+                <div id='gallery' class="gallery">
+                <% if (loggedInEscort.gallery && loggedInEscort.gallery.length > 0) { %>
+                        <% loggedInEscort.gallery.forEach(image => { %>
+                            <img src="<%= image %>" class='galleryImg' alt="Gallery Image" width="150">
+                        <% }) %>
+                <% } else { %>
+                    <p id="gallery-text">No gallery images available.</p>
+                <% } %>
+                </div>
+            <input id="edit-img" type="file" accept="image/*" hidden>
+            <button id='edit-image' class="edit-btn" type='button'>Upload to Gallery</button>                                 
+            <button style="color: white; height: 44px; background: #1877E2; width: 100%; padding: 10px; border-radius: 6px; font-size: 1.2rem" id="postToggleBtn" class="edit-btn" data-id="<%= loggedInEscort._id %>" data-status="<%= loggedInEscort.allowedtopost %>"> <%= loggedInEscort.allowedtopost ? "Unpost" : "Post As Escort" %></button>
+
+        </div></div>
+        <div id="edit-mode" class="edit-mode" style="display: none;" class="profile-content">
+            <form class="edit-form">
+            <h2>Edit Profile</h2>
+            <p>Update your profile information below:</p>&nbsp;
+            <div class="left">
+                <label class="field-label">Name</label>
+                <input type="text" name="name" id="name-input" value="<%= loggedInEscort.name %>">
+
+                <label class="field-label">City</label>
+                <input type="text" name="city" id="city-input" value="<%= loggedInEscort.city %>">
+
+                <label class="field-label">Location</label>
+                <input type="text" name="location" id="location-input" value="<%= loggedInEscort.areaLabel%>">
+            </div>
+
+            <div class="right">
+                
+                <label class="field-label">Phone</label>
+                <input type="text" name="phone" id="phone-input" value="<%= loggedInEscort.phone || '' %>">
+
+                <label class="field-label">Instagram</label>
+                <input type="url" name="instagram" id="instagram-input" placeholder="Paste your instagram name here..." value="<%= loggedInEscort.socialLinks.instagram || '' %>">
+
+                <label class="field-label">Facebook</label>
+                <input type="url" name="facebook" id="facebook-input" placeholder="Paste your facebook name here..." value="<%= loggedInEscort.socialLinks.facebook || '' %>">
+
+                <label class="field-label">Twitter</label>
+                <input type="url" name="twitter" id="twitter-input" placeholder="Paste your twitter name here..." value="<%= loggedInEscort.socialLinks.twitter || '' %>">
+
+                <label class="field-label">TikTok</label>
+                <input type="url" name="tiktok" id="tiktok-input" placeholder="Paste your tiktok name here..." value="<%= loggedInEscort.socialLinks.tiktok || '' %>">
+
+                <label class="field-label">Snapchat</label>
+                <input type="url" name="snapchat" id="snapchat-input" placeholder="Paste your snapchat name here..." value="<%= loggedInEscort.socialLinks.snapchat || '' %>">
+            </div>
+            <div id="edit-buttons" class="edit-buttons" style="display: none;">
+                <button class="save-btn" type="button">Save</button>
+                <button class="cancel-btn" type="button">Cancel</button>
+            </div>
+            
+       </form>
+        </div>
+
+            
+            <!-- Buttons -->
+</div></div>
+<script defer src="/js/gallery.js"></script>
+<!-- <script defer src="/js/debugsaving.js"></script> -->
+<!-- <script defer src="/js/script.js"></script>  no need after removing header wish it wil reduce loading/lagging-->
+<script>
+  const editBtn = document.querySelector('.edit-bt');
+  const userImageInput = document.getElementById('userimage');
+    const userImage = document.querySelector('.img-wrapper img');
+    const userImageWrapper = document.querySelector('.img-wrapper');
+    const editImg = document.querySelector('#edit-img'),
+        editImage = document.querySelector('#edit-image'),
+      galleryContainer = document.querySelector('#gallery'),
+      displayMode = document.querySelector('#display-mode'),
+      editMode = document.querySelector('#edit-mode'),
+      backgroundCont = document.querySelector('.img-container');
+    const editImageBg = document.querySelector('#editImageBg');
+
+    document.querySelector('#tools').addEventListener('click', ()=>{
+    if(!confirm('Are you sure you want to log out?')) return;
+      window.location.href = `/logout`;
+    })
+function toggleMenu() {
+  const menu = document.getElementById("dropdownMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+// Optional: Close menu when clicking outside
+document.addEventListener("click", function(event) {
+  const trigger = document.querySelector(".menu-trigger");
+  const menu = document.getElementById("dropdownMenu");
+  if (!trigger.contains(event.target) && !menu.contains(event.target)) {
+    menu.style.display = "none";
+  }
+});
+
+backgroundCont.addEventListener('click', (e) => {
+  if (!e.target.closest('.menu-container') && !e.target.closest(document.querySelector('#home'))) {
+    editImageBg.click();
+  }
+});
+
+editImageBg.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file || !(file instanceof Blob)) {
+    console.error("No valid file selected");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    backgroundCont.style.backgroundImage = `url(${evt.target.result})`;
+  };
+  reader.readAsDataURL(file);
+});
+ 
+    
+//   console.log(window.missingFds);
+const postBtn = document.querySelector('#postToggleBtn')
+
+if (postBtn) {
+  postBtn.addEventListener('click', async (e) => {
+    const escortId = e.target.dataset.id;
+    const isPublished = e.target.dataset.status === "true";
+    let newStatus = !isPublished;
+    postBtn.disabled = true;
+    postBtn.textContent = newStatus ? "Posting..." : "Unposting...";
+
+    try {
+      const res = await fetch(`/post/${escortId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ allowedtopost: newStatus })
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        console.log(newStatus)
+        alert(result.message);
+        postBtn.textContent = newStatus ? "Unpost" : "Post As Escort";
+        postBtn.dataset.status = newStatus.toString();
+       
+      } else {
+        alert("Something went wrong: " + result.message);
+      }
+    } catch (err) {
+      newStatus = !newstatus;
+      postBtn.textContent = newStatus ? "Unpost" : "Post As Escort";
+      console.error("Toggle error:", err);
+      alert("Check your internet. Try again.");
+    } finally {
+      postBtn.disabled = false;
+    }
+  });
+}
+
+
+editImage.addEventListener('click', (e)=> {
+    editImg.click();
+})
+
+editImg.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+        const img = document.createElement('img');
+        img.src = e.target.result
+        img.alt = 'Gallery Image';
+        img.style.width = '80px';
+
+        
+        // Hide the text if there are images
+        if (document.querySelector('#gallery-text')) {
+            document.querySelector('#gallery-text').remove();
+        }
+        galleryContainer.appendChild(img);
+        console.log(e.target.result);
+        uploadGalleryImage(e.target.result);
+    }
+    reader.readAsDataURL(file)
+})
+
+    userImageWrapper.addEventListener('click', () => {
+        userImageInput.click();
+    });
+
+userImageInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    userImage.src = '';
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            userImage.src = e.target.result;
+            updateImage(e.target.result)
+
+            userImageInput.value = ''; // Clear the input after reading the file
+        };
+        reader.readAsDataURL(file);
+
+        
+    }
+});
+
+async function updateImage(ImageData) {
+    try{
+        let res = await fetch('/profile/edit', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({userImg: ImageData})
+        })
+        let result = await res.json();
+        if(result.success) {
+            const badgeContainer = document.getElementById('profile-status');
+
+            if (result.missingFields.length === 0) {
+                badgeContainer.innerHTML = `
+                    <span class="badge success-badge tooltip">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="tooltiptext">Profile is complete</span>
+                    </span>
+                `;
+                postBtn.classList.remove('disabled'); // optional styling class
+                postBtn.disabled = false;
+                postBtn.title = "Please complete your profile before uploading a post.";
+            } else {
+                badgeContainer.innerHTML = `
+                <span class="badge alert-badge tooltip">
+                    <i class="fas fa-exclamation-circle"></i>   
+                    <span class="tooltiptext">Incomplete Profile (${result.missingFields.length})</span>
+                </span>`;
+            }
+
+            console.log('Image updated successfully');
+            // Optionally, you can reload the page or update the image source
+             // Update the displayed image
+        } else {
+            console.error('Failed to update image:', result.message);
+        }
+    } catch(err) {
+        console.error('Error updating image:', err);
+    }
+}
+
+document.querySelector('.edit-form').addEventListener('submit', (e) => {
+  e.preventDefault(); // Stop native submission cold
+});
+async function uploadGalleryImage(base64) {
+    let galleryStore = []
+    galleryStore.push(base64);
+  try {
+    const res = await fetch('/profile/edit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({gallery: galleryStore })
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      console.log('Gallery image saved!');
+    }
+  } catch (err) {
+    console.error('Failed to save gallery image:', err);
+  }
+}
+
+
+
+
+editBtn.addEventListener('click', () => {
+    displayMode.classList.add('hide');
+    editMode.classList.remove('hide');
+   document.querySelector('.display-mode').style.display = 'none';
+    document.querySelector('.edit-mode').style.display = 'flex';
+    document.querySelector('.edit-buttons').style.display = 'flex';
+});
+
+document.querySelector('.cancel-btn').addEventListener('click', () => {
+  editMode.classList.add('hide');
+  displayMode.classList.remove('hide');
+  document.querySelector('.edit-mode').style.display = 'none';
+  document.querySelector('.edit-buttons').style.display = 'none';
+    document.querySelector('.edit-btn').style.display = 'save';
+  document.querySelector('.display-mode').style.display = 'flex';
+});
+
+
+// 🧠 Mapping display fields to input data keys
+function updateDisplayFields(data) {
+  const fieldMap = {
+    name: 'name-display',
+    city: 'city-display',
+    areaLabel: 'location-display',
+    phone: 'phone-display'
+  };
+
+  const socialMap = {
+    instagram: {
+      id: 'instagram-display',
+      baseUrl: 'https://instagram.com/'
+    },
+    facebook: {
+      id: 'facebook-display',
+      baseUrl: 'https://facebook.com/'
+    },
+    twitter: {
+      id: 'twitter-display',
+      baseUrl: 'https://twitter.com/'
+    },
+    tiktok: {
+      id: 'tiktok-display',
+      baseUrl: 'https://www.tiktok.com/@'
+    },
+    snapchat: {
+      id: 'snapchat-display',
+      baseUrl: 'https://www.snapchat.com/add/'
+    }
+  };
+
+  // ✅ Update standard fields like name, city, etc.
+  for (let key in fieldMap) {
+    if (data[key]) {
+      const el = document.getElementById(fieldMap[key]);
+      if (el) {
+        el.textContent = key === 'name'
+          ? `Hi ${data[key].split(' ')[0]}`
+          : data[key];
+      }
+    }
+  }
+
+  // 🔗 Update social media links from data.socialLinks
+  for (let key in socialMap) {
+    if (data.socialLinks && data.socialLinks[key]) {
+      const social = socialMap[key];
+      const el = document.getElementById(social.id);
+      if (el) {
+        const username = data.socialLinks[key].trim();
+        el.innerHTML = `<a href="${social.baseUrl}${username}" target="_blank"><i class="fab fa-${key}"></i></a>`;
+      }
+    }
+  }
+}
+// 🏷 Update profile badge state
+function updateBadge(missingFields) {
+  const badgeContainer = document.getElementById('profile-status');
+  badgeContainer.innerHTML = missingFields.length === 0
+    ? `<span class="badge success-badge tooltip">
+         <i class="fas fa-check-circle"></i>
+         <span class="tooltiptext">Profile is complete</span>
+       </span>`
+    : `<span class="badge alert-badge tooltip">
+         <i class="fas fa-exclamation-circle"></i>
+         <span class="tooltiptext">Incomplete Profile (${missingFields.length})</span>
+       </span>`;
+}
+
+// 🚨 Toast messaging
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+// 📝 Save logic on button click
+const saveBtn = document.querySelector('.save-btn');
+saveBtn.addEventListener('click', async () => {
+  const data = {
+    name: document.getElementById('name-input').value,
+    areaLabel: document.getElementById('location-input').value,
+    city: document.getElementById('city-input').value,
+    socialLinks: {
+    instagram: document.getElementById('instagram-input').value || '',
+    facebook: document.getElementById('facebook-input').value || '',
+    twitter: document.getElementById('twitter-input').value || '',
+    tiktok: document.getElementById('tiktok-input').value || '',
+    snapchat: document.getElementById('snapchat-input').value || '',
+    phone: document.getElementById('phone-input').value || ''}
+  };
+
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving…";
+
+  try {
+    const res = await fetch('/profile/edit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      updateDisplayFields(data);
+      updateBadge(result.missingFields || []);
+      showToast("Profile updated successfully ✅");
+
+      // 💡 Switch back to display mode
+      editMode.classList.add('hide');
+      displayMode.classList.remove('hide');
+      document.querySelector('.edit-mode').style.display = 'none';
+      document.querySelector('.edit-buttons').style.display = 'none';
+      document.querySelector('.display-mode').style.display = 'flex';
+    } else {
+      showToast("Update failed ❌");
+    }
+  } catch (err) {
+    console.error("Save error:", err);
+    showToast("Something went wrong. Try again.");
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = "Save";
+  }
+});
+
+</script>
+<div id="toast" class="toast-message"></div>
+</body>
+</html>

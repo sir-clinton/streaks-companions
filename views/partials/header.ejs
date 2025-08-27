@@ -1,0 +1,48 @@
+<div class="overlay" id="overlay"></div>
+<header class="header">
+            <nav class="nav" role="navigation" aria-label="Main Navigation">
+            <div id="nav" class="nav-wrapper">
+                
+                <div class="left">
+                <ul id="nav-left" role="list">
+                    <li class="nav-item" role="listitem"><a href="/" class="nav-link">Home</a></li>
+                    <li class="nav-item" role="listitem" style="position: relative">
+                        <button style="background: transparent; border: none; outline: none;" class="nav-link" id="browse-escorts-trigger" aria-haspopup="true" aria-expanded="false">Browse Locations</button>
+                    </li> 
+                    <!-- <a href="#" class="nav-link" id="browse-escorts-trigger" aria-haspopup="true" aria-expanded="false">Browse Locations</a> -->
+                    <ul class="submenu" id="browse-escorts-submenu" role="menu" aria-label="Browse Locations Submenu">
+                        <!-- submenu items should be <div role="menuitem"> or <a role="menuitem"> -->
+                    </ul>
+                    <li class="nav-item" role="listitem"><a href="/agencies" class="nav-link">Agency</a></li>
+                    <li class="nav-item" role="listitem"><a href="#contact" class="nav-link">Contact Us</a></li>
+                </ul>
+                </div>
+
+                <div class="right">
+                <ul id="nav-right" role="list">
+                    <% if (loggedInEscort) { 
+                    const isAgency = loggedInEscort.role === 'agency';
+                    const profileLink = isAgency ? '/agency-dashboard' : '/profile';
+                    const nameParts = loggedInEscort.name.trim().split(' ');
+                    %>
+                    <li class="nav-item" role="listitem" style="display: flex; justify-content: center; align-items: center;">
+                        <a href="<%= profileLink %>" title="<%= loggedInEscort.name %>" class="escort-profile-link nav-link" style="display: flex; justify-content: center; align-items: center; padding: 0; margin-left: 8px;">
+                        <img src="<%= loggedInEscort.userImg || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png' %>" alt="Profile picture of <%= loggedInEscort.name %>" style="border-radius: 50%; width: 30px; height: 30px">
+                        <span class='name' style="margin-left: 8px;">Hi, <%= nameParts.length > 1 ? nameParts[0] : loggedInEscort.name %></span>
+                        </a>
+                    </li>
+                    <% } else { %>
+                    <li class="nav-item" role="listitem"><a href="/login" class="nav-link">Login</a></li> 
+                    <li class="nav-item" role="listitem"><a href="/register" class="nav-link">Sign Up</a></li>
+                    <% } %>
+                </ul>
+                </div>
+
+            </div>
+            </nav>
+
+        </header>
+         <div class='bar'>
+            <a href="/" aria-label="Home"><i class="fas fa-home"></i></a>            
+            <i id="menu-icon" class="fas fa-bars"></i>
+        </div>

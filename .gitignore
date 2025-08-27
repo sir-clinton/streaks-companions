@@ -1,0 +1,10 @@
+/dist/
+/build/
+/*.log
+.DS_Store
+.env.local
+.env.production
+.env.development
+/node_modules/".env" 
+.env
+/node_modules/
