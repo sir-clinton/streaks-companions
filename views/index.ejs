@@ -197,7 +197,7 @@ button[type="button"]:hover {
                     <% } else{ %>
                  <% escorts.forEach(escort => {  %>
                     <div class="card" style="display: flex;">
-                      <a href="/author/<%= escort.name%>" data-id="<%= escort.id%>" title="View profile of <%= escort.name %>, <%= escort.city %> escort in <%= escort.areaLabel %>">
+                      <a href="/author/<%= escort.name%>" data-id="<%= escort.id%>" title="View profile of <%= escort.name %>, a <%= escort.city %> escort in <%= escort.areaLabel %>">
                     <% if (escort.isBoosted) { %>
                     <div class="badge <%= escort.boostType %>">
                         <%= escort.boostType %>
