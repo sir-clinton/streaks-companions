@@ -61,7 +61,9 @@
         text-align: left;
         width: 100%;
         white-space: nowrap;
-
+        transition: .4s ease;
+        font-size: 18px;
+        font-weight: 500;
     }
      #browse-escorts-submenu a.disabled {
   color: #666;               /* gray text */
@@ -210,6 +212,6 @@ img:not(.escort-profile-link img) {
         padding: 12px 0;
     }
     #hero-section h1{
-    font-size: 2rem;
+    font-size: 1.6rem;
 }
 }
