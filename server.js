@@ -1646,7 +1646,7 @@ app.post('/profile/edit', async (req, res) => {
   }
 });
 
-app.get('/escorts-map', ()=> {
+app.get('/escorts-map', ( res, req)=> {
   res.sendFile(path.join(__dirname, 'map.html'));   
 })
 
