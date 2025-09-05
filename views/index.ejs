@@ -331,6 +331,7 @@ document.getElementById('openBookmarkModal').addEventListener('click', () => {
       <button class="remove-bookmark" data-id="${item.id}" style="background: none; border: none; color: #c0392b; cursor: pointer;">✕</button>
     </div>
   `).join('');
+  
   document.querySelectorAll('.remove-bookmark').forEach(btn => {
   btn.addEventListener('click', () => {
     const id = btn.dataset.id;

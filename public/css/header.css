@@ -150,13 +150,13 @@ img:not(.escort-profile-link img) {
 }
  .bar{
     display: flex;
-}   #nav div ul .nav-item  #browse-escorts-submenu{
+}   #browse-escorts-submenu{
         top: 0;
         left: 0;
         /* opacity: 0; */
         /* visibility: hidden; */
         display: none;
-        background-color: #25D366;
+        background-color: #25D366 !important;
         padding-top: 40px;
         margin-top: 22px;
         max-width: 230px;
