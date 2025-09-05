@@ -1647,8 +1647,35 @@ app.post('/profile/edit', async (req, res) => {
 });
 
 app.get('/escorts-map', (req, res)=> {
-  res.sendFile(path.join(__dirname, 'map.html'));   
+  res.render('map')   
 })
+
+// Helper to calculate distance (Haversine formula)
+function getDistance(lat1, lng1, lat2, lng2) {
+  const toRad = deg => deg * Math.PI / 180;
+  const R = 6371; // Earth radius in km
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+// API endpoint
+app.get('/api/escorts', async (req, res) => {
+  const { city, lat, lng } = req.query;
+
+  let results = await Escort.find({}).lean();
+
+  if (city) {
+    results = escorts.filter(e => e.city.toLowerCase() === city.toLowerCase());
+  } else if (lat && lng) {
+    const userLat = parseFloat(lat);
+    const userLng = parseFloat(lng);
+    results = escorts.filter(e => getDistance(userLat, userLng, e.lat, e.lng) < 10); // within 10km
+  }
+
+  res.json(results);
+});
 
 //  GET 
 //  Renders homepage with boosted escorts first, then random others.
