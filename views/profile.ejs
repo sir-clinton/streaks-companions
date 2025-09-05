@@ -12,7 +12,9 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
      <link rel="stylesheet" href="/css/header.css">
-    <link rel="stylesheet" href="/css/footer.css">
+    <noscript><link rel="stylesheet" href="/css/header.css"></noscript>
+    <link rel="preload" href="/css/footer.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/footer.css"></noscript>
     <style>
         #hero-section2{
             width: 100%;
@@ -21,13 +23,12 @@
         .profile-preview{
             /* url('https://ei.phncdn.com/pics/users/0008/0467/3202/cover30226095/(m=eRSa4qFxcWaAb)(mh=qnb0ZXLa-OAQh0E9)1323x270.jpg') */
             background:  no-repeat;
-            height: 300px;                /* or whatever profile-hero height you like */
+            height: 300px;                
             background-repeat: no-repeat;
-            position: relative;           /* if you’re absolutely positioning the inner <img> */
+            position: relative;           
             background-size: cover;
             background-position: center;
             width: 100%;
-            /* max-height: 160px; */
             aspect-ratio: 5/4;
         }.social-links-nav {
             display: flex;
@@ -113,27 +114,7 @@
             }.left p{
                 font-size: .9rem;
                 padding: 6px 0}
-            /* .listings {
-                display: flex
-                flex-wrap: wrap
-                gap: 16px
-            }.card {
-                width: calc(33.333% - 16px)
-                background-color: #f8f8f8
-                border-radius: 8px
-                overflow: hidden
-                text-decoration: none
-                color: black
-                display: flex
-                flex-direction: column
-            }.image-wrapper {
-                width: 100%
-                height: 200px
-            }.image-wrapper img {
-                width: 100%
-                height: 100%
-                object-fit: cover
-            }*/.info { 
+            .info { 
                 padding: 10px;
             }.info p {
                 margin-bottom: 4px;
@@ -152,17 +133,17 @@
             padding: 4px 0;
             font-size: 1rem
             }#about-display, #main .right {
-            font-size: 1rem;                /* Base size — scales with user's default */
-            line-height: 1.6;               /* Comfortable line spacing */
-            margin-bottom: 1.5em;           /* Responsive spacing below */;
-            color: #333;                    /* Clean readable text */
-            padding: 0.5em 1em;             /* Internal spacing */
-            background-color: #f0f0f0 ;     /* Light background for readability */
-            border-radius: 8px ;            /* Smooth corners */
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05) /* Subtle depth */
+            font-size: 1rem;         
+            line-height: 1.6;        
+            margin-bottom: 1.5em;    
+            color: #333;            
+            padding: 0.5em 1em;      
+            background-color: #f0f0f0 ;
+            border-radius: 8px ;        
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05)
             }
             #about-display{
-                max-width: 680px;               /* Prevents overly wide text blocks */
+                max-width: 680px;               
                 margin-bottom: 10px;
             }
 
@@ -271,9 +252,18 @@
                     <img loading="lazy" src="<%= escort.userImg%>" alt="Meet <%= escort.name %>, <%= escort.city %> hot and verified companion in <%= escort.areaLabel %> offering massages, Dinner date & Adult Companionship" title="Meet <%= escort.name %>, <%= escort.city %> hot and verified escort in <%= escort.areaLabel %>, offering massages, Dinner date & Adult Companionship">
                 </div></a>
                 <div class="info">
-                    <p class="escort-name"><%= escort.name%></p>
-                    <span aria-label="Bookmark profile"><i style="color: #444" class="fa-solid fa-bookmark" aria-hidden="true"></i></span>
-                    <!-- <p class="escort-phone"><span>Phone</span> 0751142915</p> -->
+                    <p class="escort-name"><%= escort.name.split(' ')[0]%></p>
+                    <button 
+                      class="bookmark-btn" 
+                      aria-label="Bookmark profile" 
+                      title="Bookmark this profile" 
+                      data-id="<%= escort._id %>" 
+                      data-name="<%= escort.name.split(' ')[0] %>" 
+                      data-img="<%= escort.userImg %>" 
+                      data-phone="<%= escort.phone %>" 
+                      style="background: none; border: none; color: #444">
+                      <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+                    </button>
                 </div><hr>
                     <p style="padding: 4px;color: #6c757d;">Meet <%= escort.name.split(' ')[0]%> a <%= escort.age %> years old <%= escort.gender%> Escort from <%= escort.city%>, <%= escort.areaLabel %> area.</p>
                 <div class="call">
@@ -288,35 +278,123 @@
     </section>
     </div>
     <%- include('partials/footer') %>
-    <script src="https://cdn.jsdelivr.net/npm/slugify@1.6.6/slugify.min.js"></script>
+    <script defer>
+        document.addEventListener('DOMContentLoaded', ()=> {
+            const cards = document.querySelectorAll('.card');
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || []; 
+            cards.forEach(el => {
+                let info = document.querySelector('.info');
+                let btn = info.querySelector('button');
+                let icon = btn.querySelector('.fa-bookmark')
+                let iconId = icon.dataset.id;
+
+            const isAlreadyBookmarked = bookmarks.some(item => item.id === iconId);
+
+            if (isAlreadyBookmarked) {
+            icon.style.color = '#25D366'; // Green
+            }})
+
+            document.querySelectorAll('.bookmark-btn').forEach(icon => {
+  icon.addEventListener('click', (e) => {
+    e.preventDefault();
+    const id = icon.dataset.id;
+    const name = icon.dataset.name;
+    const img = icon.dataset.img;
+    const phone = icon.dataset.phone
+
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || []; // ✅ Fresh copy per click
+    const isAlreadyBookmarked = bookmarks.some(item => item.id === id);
+
+    if (!isAlreadyBookmarked) {
+      bookmarks.push({ id, name, img, phone});
+      localStorage.setItem('bookmarkedEscorts', JSON.stringify(bookmarks));
+      icon.style.color = '#25D366'; // Green
+    } else {
+      const updated = bookmarks.filter(item => item.id !== id);
+      localStorage.setItem('bookmarkedEscorts', JSON.stringify(updated));
+      icon.style.color = '#444'; // Grey
+    }
+  });
+});
+
+  // Show modal trigger (e.g. icon, button)
+    document.getElementById('openBookmarkModal').addEventListener('click', () => {
+    const modal = document.getElementById('bookmarkModal');
+    const list = document.getElementById('bookmarkedList');
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || [];
+
+    list.innerHTML = bookmarks.length === 0 ? 
+    "<p>No bookmarks yet.</p>" : 
+    bookmarks.map(item => `
+        <div style="margin-bottom: 12px; display: flex; align-items: center">
+        <img src="${item.img}" alt="${item.name}" width="60" style="border-radius:5px;">
+        <a href="/author/${item.name}" class="copy-number-btn" data-name="${item.name.split(' ')[0]}" data-phone="${item.phone}" style="margin-left:8px; flex: 1; text-decoration: underline; cursor: pointer;">
+            View ${item.name}'s profile.
+        </a>
+        <button class="remove-bookmark" data-id="${item.id}" style="background: none; border: none; color: #c0392b; cursor: pointer;">✕</button>
+        </div>
+    `).join('');
+    document.querySelectorAll('.remove-bookmark').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || []; // ✅ fresh copy
+        const updatedBookmarks = bookmarks.filter(item => item.id !== id);
+        localStorage.setItem('bookmarkedEscorts', JSON.stringify(updatedBookmarks));
+        btn.parentElement.remove();
+
+        if (updatedBookmarks.length === 0) {
+        document.getElementById('bookmarkModal').style.display = 'none';
+        }
+    });
+    });
+
+    modal.style.display = "flex";
+    });
+
+
+    // Close modal
+    document.querySelector('.close-btn').onclick = function () {
+    document.getElementById('bookmarkModal').style.display = "none";
+    };
+
+    // Close on outside click
+    window.onclick = function(event) {
+    const modal = document.getElementById('bookmarkModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+    }
+    });
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/slugify@1.6.6/slugify.min.js"></script>
     <script defer src="/js/script.js"></script>
     <script defer src="/js/gallery.js"></script>
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "<%= escort.name %>",
-  "image": "<%= escort.image_url %>",
-  "description": "Elite companion from <%= escort.areaLabel %>. Discreet meetups and private experiences.",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "<%= escort.city %>",
-    "addressCountry": "KE"
-  },
-  "areaServed": {
-    "@type": "Place",
-    "name": "<%= escort.areaLabel%>"
-  },
-  "telephone": "<%= escort.phone %>",
-    "url": "<%= escort.profile_url || '' %>",
-  "priceRange": "$$$",
-  "openingHours": "Mo-Su 24:00",
-  "keywords": [
-    "escorts in <%= escort.areaLabel %>",
-    "companions near <%= escort.areaLabel %>",
-    "private meetups Nairobi"
-  ]
-}
+    <script defer type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "<%= escort.name %>",
+        "image": "<%= escort.image_url %>",
+        "description": "Elite companion from <%= escort.areaLabel %>. Discreet meetups and private experiences.",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "<%= escort.city %>",
+            "addressCountry": "KE"
+        },
+        "areaServed": {
+            "@type": "Place",
+            "name": "<%= escort.areaLabel%>"
+        },
+        "telephone": "<%= escort.phone %>",
+            "url": "<%= escort.profile_url || '' %>",
+        "priceRange": "$$$",
+        "openingHours": "Mo-Su 24:00",
+        "keywords": [
+            "escorts in <%= escort.areaLabel %>",
+            "companions near <%= escort.areaLabel %>",
+            "private meetups Nairobi"
+        ]
+        }
 </script>
 </body>
 </html>

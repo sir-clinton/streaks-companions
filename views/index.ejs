@@ -22,14 +22,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/public/images/favicon.png" type="image/png">
     <link rel="preload" href="https://fonts.cdnfonts.com/css/satoshi?display=swap" as="style">
-    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/satoshi?display=swap">
+    <noscript><link rel="stylesheet" href="https://fonts.cdnfonts.com/css/satoshi?display=swap"></noscript>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
     <!-- ✅ Preload critical CSS -->
-    <link rel="preload" href="/css/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/css/styles.css"></noscript>
+    <link href="/css/styles.css" rel='stylesheet'>
     <link rel="stylesheet" href="/css/header.css">
+    <noscript><link rel="stylesheet" href="/css/header.css"></noscript>
     <link rel="preload" href="/css/footer.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/footer.css"></noscript>
     <style>
        .escort-name {
             margin: 0;
@@ -77,7 +78,7 @@
   right: 20px;
   width: 56px;
   height: 56px;
-  background-color: #25D366; /* WhatsApp green */
+  background-color: #25D366; 
   color: #fff;
   border-radius: 50%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
@@ -104,30 +105,28 @@
 
 button[type="button"] {
   background-color: #009688;      
-  color: white;                   /* Text color for contrast */
-  border: none;                   /* Clean edge */
-  padding: 10px 16px;             /* Spacious touch zone */
-  margin-top: 10px;               /* Space between filter and button */
-  font-size: 16px;                /* Readable size */
-  font-weight: bold;             /* Makes it stand out */
-  border-radius: 6px;             /* Soft edges */
-  cursor: pointer;                /* Pointer cursor on hover */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Slight depth */
+  color: white; 
+  border: none;                  
+  padding: 10px 16px;       
+  margin-top: 10px;            
+  font-size: 16px;        
+  font-weight: bold;      
+  border-radius: 6px;     
+  cursor: pointer;        
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   transition: background-color 0.3s ease;
 }
 
 button[type="button"]:hover {
   background-color: #00796b;
-  color: #fff;     /* Slightly darker teal on hover */
+  color: #fff;    
 }#hero-section h1 {
-  font-size: clamp(1.5rem, 5vw, 2.5rem); /* Responsive size */
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
   line-height: 1.2;
   font-weight: bold;
   margin: 0.5em 0;
 }.call a {
-  color: #25D366;
   background-color: transparent;
-  color: "#25D366";
   padding: 10px;
   color: #333;
   text-align: center
@@ -137,7 +136,15 @@ button[type="button"]:hover {
     background-color: #ccc;
     cursor: not-allowed;
     pointer-events: none;
+  }.fa-bookmark.active {
+    color: #25D366;
+  }@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+    padding: 16px;
   }
+}
+
     </style>
 </head>
 <body>
@@ -220,7 +227,6 @@ button[type="button"]:hover {
                       style="background: none; border: none; color: #444">
                       <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
                     </button>
-                    <!-- <p><i class="fa-solid fa-location-dot" style="color: #6c757d;"></i> Kware.</p> -->
                 </div><hr>
                 <p style="padding: 4px;color: #6c757d;">Meet <%= escort.name.split(' ')[0]%> a <%= escort.age %> years old <%= escort.gender%> Escort from <%= escort.city%>, <%= escort.areaLabel %> area.</p>
                 <div class="call">
@@ -245,12 +251,22 @@ button[type="button"]:hover {
 <i class="fa-solid fa-bookmark" id="openBookmarkModal" title="Saved Profiles"></span></i>
 
      <%- include('partials/footer')  %>
-     <script src="https://cdn.jsdelivr.net/npm/slugify@1.6.6/slugify.min.js"></script>
-
+    <script defer src="https://cdn.jsdelivr.net/npm/slugify@1.6.6/slugify.min.js"></script>
+    <script defer src="/js/script.js"></script>
     <script defer>
     document.addEventListener('DOMContentLoaded', () => {
-  // Code to set up your UI goes here
-   // JavaScript
+      const cards = document.querySelectorAll('.card');
+      const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || []; 
+      cards.forEach(el => {
+        let btn = card.querySelector('.bookmark-btn');
+        let icon = btn.querySelector('.fa-bookmark')
+        let iconId = icon.dataset.id;
+
+    const isAlreadyBookmarked = bookmarks.some(item => item.id === iconId);
+
+    if (isAlreadyBookmarked) {
+      icon.style.color = '#25D366'; // Green
+    }})
      let prefferedOption = localStorage.getItem('prefferedOption')
     ? JSON.parse(localStorage.getItem('prefferedOption'))
     : {city: 'Nairobi', gender: 'Female'};
@@ -266,7 +282,7 @@ button[type="button"]:hover {
 
         const gender = document.getElementById('gender').value;
         const city = document.getElementById('city').value;
-        const age = document.getElementById('age').value; // new line
+        const age = document.getElementById('age').value; 
 
         if (!gender || !city || !age || gender === 'Select Gender' || city === 'Select City' || age === 'Select Age Range') return;
 
@@ -287,7 +303,7 @@ button[type="button"]:hover {
     const isAlreadyBookmarked = bookmarks.some(item => item.id === id);
 
     if (!isAlreadyBookmarked) {
-      bookmarks.push({ id, name, img, phone}); // or escort.phone if dynamic
+      bookmarks.push({ id, name, img, phone});
       localStorage.setItem('bookmarkedEscorts', JSON.stringify(bookmarks));
       icon.style.color = '#25D366'; // Green
     } else {
@@ -309,9 +325,9 @@ document.getElementById('openBookmarkModal').addEventListener('click', () => {
   bookmarks.map(item => `
     <div style="margin-bottom: 12px; display: flex; align-items: center">
       <img src="${item.img}" alt="${item.name}" width="60" style="border-radius:5px;">
-      <span class="copy-number-btn" data-name="${item.name.split(' ')[0]}" data-phone="${item.phone}" style="margin-left:8px; flex: 1; text-decoration: underline; cursor: pointer;">
-        📋 Copy ${item.name}'s Number
-      </span>
+      <a href="/author/${item.name}" class="copy-number-btn" data-name="${item.name.split(' ')[0]}" data-phone="${item.phone}" style="margin-left:8px; flex: 1; text-decoration: underline; cursor: pointer;">
+        View ${item.name}'s profile.
+      </a>
       <button class="remove-bookmark" data-id="${item.id}" style="background: none; border: none; color: #c0392b; cursor: pointer;">✕</button>
     </div>
   `).join('');
@@ -327,27 +343,6 @@ document.getElementById('openBookmarkModal').addEventListener('click', () => {
       document.getElementById('bookmarkModal').style.display = 'none';
     }
   });
-  document.querySelectorAll('.copy-number-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const number = btn.dataset.phone;
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(number)
-          .then(() => {
-            btn.textContent = `✅ Copied ${number}`;
-            setTimeout(() => {
-              btn.textContent = `📋 Copy ${e.target.dataset.name}'s Number`;
-            }, 2000);
-          })
-          .catch(err => {
-            console.error('Clipboard failed:', err);
-            alert('Could not copy the number. Try manually.');
-          });
-      } else {
-        alert('Clipboard not supported. Please copy manually.');
-      }
-      });
-    });
-
 });
 
   modal.style.display = "flex";
@@ -369,12 +364,8 @@ window.onclick = function(event) {
 });
 
 function showLoading() {
-  if (document.getElementById("loadig-spinner").style.display === "block") {
-    document.getElementById("loading-spinner").style.display = "none";
-  } else {
-      document.getElementById("loading-spinner").style.display = "block";
-  }
-
+  const spinner = document.getElementById("loading-spinner");
+  spinner.style.display = spinner.style.display === "block" ? "none" : "block";
 }
 
     // Nearby escorts
@@ -394,7 +385,6 @@ function fetchNearbyEscorts() {
     try {
       nearbyBtn.disabled = true;
       nearbyBtn.textContent = "Searching nearby...";
-      // showLoading();
       const response = await fetchWithTimeout(`/nearby?lat=${lat}&lng=${lng}`);
 
       if (!response.ok) {
@@ -495,7 +485,7 @@ function fetchNearbyEscorts() {
 }
 
  </script>
- <script type="application/ld+json">
+ <script defer type="application/ld+json">
   <%- JSON.stringify({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -513,6 +503,7 @@ function fetchNearbyEscorts() {
     "url": meta.url
   }) %>
 </script>
-<script defer type='module' src="/js/script.js"></script>
 </body>
 </html>
+
+

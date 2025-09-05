@@ -1646,6 +1646,10 @@ app.post('/profile/edit', async (req, res) => {
   }
 });
 
+app.get('/escorts-map', ()=> {
+  res.status(200).sendFile(path.join(__dirname, 'map.html'));
+})
+
 //  GET 
 //  Renders homepage with boosted escorts first, then random others.
 app.get('/', async (req, res) => {
