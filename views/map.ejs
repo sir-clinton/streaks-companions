@@ -12,8 +12,8 @@ cd<!DOCTYPE html>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
   <style>
-    #map { min-height: 70vh; }
-    select { margin: 10px; padding: 5px; }
+    .container #main #map { min-height: 70vh; }
+    .container #main select { margin: 10px; padding: 5px; }
 	.container header nav .nav-wrapper div ul li a{
 		color: black;
 		transition: all .3s ease-in
@@ -26,7 +26,7 @@ cd<!DOCTYPE html>
 </head>
 <body>
 <div class="container">
-    <%- include('partials/header')  %>
+<%- include('partials/header')  %>
 <section id="main">
   <select id="citySelect">
     <option value="">-- Select City --</option>
