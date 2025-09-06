@@ -411,6 +411,7 @@ function updateBookmarkIcons() {
           prioritizeLCPImage();
         } else {
           renderEscortCards([]);
+	  observeCards(); // <-- move this here
           prioritizeLCPImage();
         }
       } catch (err) {
