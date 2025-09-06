@@ -980,7 +980,6 @@ app.get('/agencies', async (req, res) => {
   }
 });
 
-const orderRank = { bronze: 1, silver: 2, gold: 3, platinum: 4 };
 function getPureTier(tier) {
   return tier?.toLowerCase() || 'bronze';
 }
