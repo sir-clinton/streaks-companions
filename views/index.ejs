@@ -332,10 +332,9 @@ function updateBookmarkIcons() {
     e.preventDefault();
     const gender = document.getElementById('gender').value;
     const city = document.getElementById('city').value;
-    const age = document.getElementById('age').value;
+    const age = document.getElementById('age').value || null;
 
     if (!gender || !city || gender === 'Select Gender' || city === 'Select City') return;
-    age = age || null;
     localStorage.setItem('prefferedOption', JSON.stringify({ city, gender, age }));
     window.location.href = `/city/${encodeURIComponent(city)}?gender=${encodeURIComponent(gender)}&age=${encodeURIComponent(age)}`;
   });
