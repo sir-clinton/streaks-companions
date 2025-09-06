@@ -157,7 +157,7 @@ button[type="button"]:hover {
             <h1>Verified Nairobi Escorts & Discreet Call Girls Near You</h1>
             <p>Welcome to Streak Companions — Nairobi’s trusted platform for verified escort services, discreet call girls, and premium companionship experiences.</p>
                 <label for="gender">Filter By</label><br>
-                <form id="filter-form" onsubmit="submitForm(event)" method="GET">
+                <form id="filter-form" method="GET">
                     <select id="gender" name="gender" aria-label="Gender filter">
                         <option value="Select Gender" disabled selected hidden>Select Gender</option>
                         <option value="Female">Female</option>
@@ -334,8 +334,8 @@ function updateBookmarkIcons() {
     const city = document.getElementById('city').value;
     const age = document.getElementById('age').value;
 
-    if (!gender || !city || !age || gender === 'Select Gender' || city === 'Select City' || age === 'Select Age Range') return;
-
+    if (!gender || !city || gender === 'Select Gender' || city === 'Select City') return;
+    age = age || null;
     localStorage.setItem('prefferedOption', JSON.stringify({ city, gender, age }));
     window.location.href = `/city/${encodeURIComponent(city)}?gender=${encodeURIComponent(gender)}&age=${encodeURIComponent(age)}`;
   });
