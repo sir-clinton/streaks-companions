@@ -513,17 +513,14 @@ app.get('/escorts-from-:slug', async (req, res) => {
 
     const finalList = [...boosted, ...normal];
 
+    const meta = generateMeta(area, city, req);
+
     if (!finalList.length) {
       return res.render('index', {
         escorts: [],
         loggedInEscort: escort,
         message: `No profiles in ${area} yet.`,
-        meta: {
-          title: `Escorts in ${area} area in ${city} | Streak.com`,
-          description: `Explore verified  escorts profiles available in ${city}.`,
-          image: finalList[0]?.userImg || '/default-preview.jpg',
-          url: req.protocol + '://' + req.get('host') + req.originalUrl
-        },
+        meta,
         city
       });
     }
@@ -532,12 +529,7 @@ app.get('/escorts-from-:slug', async (req, res) => {
       escorts: finalList,
       loggedInEscort: escort,
       message: null,
-      meta: {
-        title: `Escorts in ${area} area in ${city} | Streak.com`,
-        description: `Explore verified  escorts profiles available in ${city}.`,
-        image: finalList[0]?.userImg || '/default-preview.jpg',
-        url: req.protocol + '://' + req.get('host') + req.originalUrl
-      },
+      meta,
       city
     });
 
@@ -992,6 +984,7 @@ app.get('/city/:name', async (req, res) => {
   const city = req.params.name?.trim().toLowerCase();
   const gender = req.query.gender?.trim().toLowerCase();
   const ageRange = req.query.age?.trim(); // e.g., "25-30"
+  const meta = generateMeta(null, city, req);
 
   let minAge = null;
   let maxAge = null;
@@ -1011,7 +1004,7 @@ app.get('/city/:name', async (req, res) => {
       escorts: [],
       message: 'Missing filter.',
       city,
-      meta: metData(req)
+      meta
     });
   }
 
@@ -1081,12 +1074,7 @@ app.get('/city/:name', async (req, res) => {
         loggedInEscort: escort || null,
         message: 'No verified profiles match that filter.',
         city,
-        meta: {
-        title: `${gender} Escorts aged ${minAge || '18'}-${maxAge || '50+'} in ${city} | Streak.com`,
-        description: `Explore verified ${gender.toLowerCase()} escorts aged ${minAge || '18'}-${maxAge || '50+'} in ${city}.`,
-        image: finalList[0]?.userImg || '/default-preview.jpg',
-        url: req.protocol + '://' + req.get('host') + req.originalUrl
-      }
+        meta
       });
     }
 
@@ -1096,12 +1084,7 @@ app.get('/city/:name', async (req, res) => {
       city,
       gender,
       message: null,
-      meta: {
-        title: `${gender} Escorts in ${city} | Streak.com`,
-        description: `Explore verified ${gender.toLowerCase()} escorts profiles available in ${city}.`,
-        image: finalList[0]?.userImg || '/default-preview.jpg',
-        url: req.protocol + '://' + req.get('host') + req.originalUrl
-      }
+      meta
     });
 
   } catch (err) {
@@ -1650,37 +1633,51 @@ app.get('/escorts-map', (req, res)=> {
   res.render('map')   
 })
 
-// Helper to calculate distance (Haversine formula)
-function getDistance(lat1, lng1, lat2, lng2) {
-  const toRad = deg => deg * Math.PI / 180;
-  const R = 6371; // Earth radius in km
-  const dLat = toRad(lat2 - lat1);
-  const dLng = toRad(lng2 - lng1);
-  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
-  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
-}
-
 // API endpoint
 app.get('/api/escorts', async (req, res) => {
   const { city, lat, lng } = req.query;
 
-  let results = await Escort.find({}).lean();
+  let results = [];
 
   if (city) {
-    results = escorts.filter(e => e.city.toLowerCase() === city.toLowerCase());
+    results = await Escort.find({ city: new RegExp(`^${city}$`, 'i') }).lean();
   } else if (lat && lng) {
     const userLat = parseFloat(lat);
     const userLng = parseFloat(lng);
-    results = escorts.filter(e => getDistance(userLat, userLng, e.lat, e.lng) < 10); // within 10km
+
+    results = await Escort.find({
+      location: {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [userLng, userLat]
+          },
+          $maxDistance: 10000 // 10km in meters
+        }
+      }
+    }).lean();
+  } else {
+    results = await Escort.find({}).lean();
   }
+  results = results.map(e => ({
+  name: e.name,
+  lat: e.location.coordinates[1],
+  lng: e.location.coordinates[0],
+  tier: e.isPremium ? 'gold' : e.isVerified ? 'bronze' : 'standard'
+}));
 
   res.json(results);
 });
-
 //  GET 
 //  Renders homepage with boosted escorts first, then random others.
 app.get('/', async (req, res) => {
   let escort;
+    const meta = {
+    title: "Kenya Escorts | Verified Companions in Nairobi, Kiambu & Beyond",
+    description: "Discover verified escorts across Kenya. Private meetups, luxury companionship, and discreet call girls in Nairobi, Kiambu, Mombasa and more.",
+    image: "https://raha.com/default-preview.jpg",
+    url: `${req.protocol}://${req.get('host')}${req.originalUrl}`
+  };
 
   try {
     if (req.session.escort) {
@@ -1764,7 +1761,7 @@ app.get('/', async (req, res) => {
       loggedInEscort: escort || null,
       escorts: verified,
       city: 'Nairobi',
-      meta: metData(req)
+      meta
     });
 
   } catch (err) {
@@ -1788,13 +1785,26 @@ app.get('/swipe-feed/:city', async (req, res) => {
   res.render('swipe', {escorts: escorts});
 });
 
-function metData(req){
-return {
-      title: "Discover verified Nairobi escorts & discreet call girls near you. Luxury companionship, live calls & massages in Kilimani, Westlands & CBD.",
-      description: 'Explore Nairobi Verified Escorts and Discreet Call Girls near you offering luxury, premium companionship, live calls, massages and more. Whether you\'re in Kilimani, Westlands, or CBD',
-      image: 'https://raha.com/default-preview.jpg',
-      url: req.protocol + '://' + req.get('host') + req.originalUrl
-    }
+const location = {
+  Nairobi: [
+    "Kilimani", "Westlands", "Karen", "CBD", "Roysambu", "Ngara", "Nairobi West", "Donholm", "Dandora", "Ojijo", "Yaya", "Sarit",
+    "Ruaka", "Syokimau", "Kitengela", "Embakasi", "South B", "South C", "Lavington", "Parklands"
+  ],
+  Kiambu: [
+    "Juja", "Kikuyu", "Ruiru", "Githurai", "Thika", "Limuru", "Kabete", "Tigoni"
+  ]
+};
+
+function generateMeta(area = null, city = "Nairobi", req) {
+  const areaSlug = slugify(area, { lower: true });
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+  return {
+    title: `Verified Escorts in ${area}, ${city} | Discreet Companions & Private Meetups`,
+    description: `Explore verified escorts and discreet call girls in ${area}, ${city}. Offering luxury companionship, massages, and private meetups near you.`,
+    image: `${baseUrl}/images/previews/${areaSlug}.jpg`, // Customize per area if available
+    url: `${baseUrl}/escorts-from-${areaSlug}`
+  };
 }
 
 app.get('/robots.txt', (req, res) => {
