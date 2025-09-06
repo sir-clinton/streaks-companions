@@ -980,10 +980,6 @@ app.get('/agencies', async (req, res) => {
   }
 });
 
-function getPureTier(tier) {
-  return tier?.toLowerCase() || 'bronze';
-}
-
 app.get('/city/:name', async (req, res) => {
   const rawCity = req.params.name;
   const rawGender = req.query.gender;
