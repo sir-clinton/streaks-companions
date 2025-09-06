@@ -26,13 +26,16 @@ cd<!DOCTYPE html>
 </head>
 <body>
     <%- include('partials/header')  %>
+<div class="container">
   <select id="citySelect">
     <option value="">-- Select City --</option>
     <option value="Nairobi">Nairobi</option>
     <option value="Kiambu">Kiambu</option>
   </select>
   <div id="map"></div>
+</div>
  <%- include('partials/footer')  %>
+
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
   <script>
