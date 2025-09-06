@@ -1324,7 +1324,7 @@ app.post('/forgot-password', async (req, res) => {
       pass: process.env.EMAIL_PASS
     }
   });
-  console.log(process.env.EMAIL_USER, process.env.EMAIL_PASS);
+  console.log(process.env.EMAIL_USER, process.env.EMAIL_PASS, mailOptions);
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
