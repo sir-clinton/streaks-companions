@@ -22,16 +22,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="<%= meta?.url %>" />
     <link rel="icon" href="/public/images/favicon.png" type="image/png">
-    <link rel="preload" href="https://fonts.cdnfonts.com/css/satoshi?display=swap" as="style">
-    <noscript><link rel="stylesheet" href="https://fonts.cdnfonts.com/css/satoshi?display=swap"></noscript>
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/satoshi?display=swap">
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
     <!-- ✅ Preload critical CSS -->
     <link href="/css/styles.css" rel='stylesheet'>
     <link rel="stylesheet" href="/css/header.css">
     <noscript><link rel="stylesheet" href="/css/header.css"></noscript>
-    <link rel="preload" href="/css/footer.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/css/footer.css"></noscript>
+    <link rel="stylesheet" href="/css/footer.css">
     <style>
        .escort-name {
             margin: 0;
@@ -202,45 +200,66 @@ button[type="button"]:hover {
                 <p>Fetching nearby profiles…</p>
               </div>
 
-                <% if(escorts.length ===  0){ %>
-                    <p style="position: absolute; top:50%; left: 50%; transform: translateX(-50%)">Please check back soon!
-                    </p>
-                    <% } else{ %>
-                 <% escorts.forEach(escort => {  %>
-                    <div class="card" style="display: flex;">
-                      <a href="/author/<%= escort.name%>" data-id="<%= escort.id%>" title="View profile of <%= escort.name %>, a <%= escort.city %> escort in <%= escort.areaLabel %>">
-                    <% if (escort.isBoosted) { %>
-                    <div class="badge <%= escort.boostType %>">
-                        <%= escort.boostType %>
-                    </div>
+        <% if (escorts.length === 0) { %>
+            <p style="position: absolute; top:50%; left: 50%; transform: translateX(-50%)">
+              Please check back soon!
+            </p>
+          <% } else { %>
+            <% escorts.forEach((escort, index) => { %>
+              <div class="card" style="display: flex;">
+                <a href="/author/<%= escort.name %>" data-id="<%= escort.id %>" title="View profile of <%= escort.name %>, a <%= escort.city %> escort in <%= escort.areaLabel %>">
+                  <% if (escort.isBoosted) { %>
+                    <div class="badge <%= escort.boostType %>"><%= escort.boostType %></div>
+                  <% } %>
+                  <div class="image-wrapper">
+                    <% if (index === 0) { %>
+                      <!-- LCP image: load eagerly and set fetchpriority -->
+                      <img
+                        width="200"
+                        height="200"
+                        src="<%= escort.userImg %>"
+                        fetchpriority="high"
+                        alt="<%= escort.name.split(' ')[0] %>, a <%= escort.age %>-year-old <%= escort.gender %> escort in <%= escort.areaLabel %>, <%= escort.city %> offering <%= escort.boostType ? escort.boostType.toLowerCase() : 'private companionship' %>"
+                      >
+                    <% } else { %>
+                      <!-- Other images: lazy load -->
+                      <img
+                        width="200"
+                        height="200"
+                        loading="lazy"
+                        src="<%= escort.userImg %>"
+                        alt="<%= escort.name.split(' ')[0] %>, a <%= escort.age %>-year-old <%= escort.gender %> escort in <%= escort.areaLabel %>, <%= escort.city %> offering <%= escort.boostType ? escort.boostType.toLowerCase() : 'private companionship' %>"
+                      >
                     <% } %>
-                <div class="image-wrapper">
-                    <img width="200" height="200" data-src="<%= escort.userImg%>" alt="<%= escort.name.split(' ')[0] %>, a <%= escort.age %>-year-old <%= escort.gender %> escort in <%= escort.areaLabel %>, <%= escort.city %> offering <%= escort.boostType ? escort.boostType.toLowerCase() : 'private companionship' %>">
-                </div>
-              </a>
+                  </div>
+                </a>
                 <div class="info">
-                    <p class="escort-name"><%= escort.name.split(' ')[0]%></p>
-                    <button 
-                      class="bookmark-btn" 
-                      aria-label="Bookmark profile" 
-                      title="Bookmark this profile" 
-                      data-id="<%= escort._id %>" 
-                      data-name="<%= escort.name.split(' ')[0] %>" 
-                      data-img="<%= escort.userImg %>" 
-                      data-phone="<%= escort.phone %>" 
-                      style="background: none; border: none; color: #444">
-                      <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
-                    </button>
-                </div><hr>
-                <p style="padding: 4px;color: #6c757d;">Meet <%= escort.name.split(' ')[0]%> a <%= escort.age %> years old <%= escort.gender%> Escort from <%= escort.city%>, <%= escort.areaLabel %> area.</p>
-                <div class="call">
-                  <a href="tel: <%= escort.phone %>">
-                CALL <%= escort.name.split(' ')[0].toUpperCase() %>
-                &nbsp;<i class="fa fa-phone"></i></a>
+                  <p class="escort-name"><%= escort.name.split(' ')[0] %></p>
+                  <button 
+                    class="bookmark-btn" 
+                    aria-label="Bookmark profile" 
+                    title="Bookmark this profile" 
+                    data-id="<%= escort._id %>" 
+                    data-name="<%= escort.name.split(' ')[0] %>" 
+                    data-img="<%= escort.userImg %>" 
+                    data-phone="<%= escort.phone %>" 
+                    style="background: none; border: none; color: #444">
+                    <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+                  </button>
                 </div>
-
+                <hr>
+                <p style="padding: 4px; color: #6c757d;">
+                  Meet <%= escort.name.split(' ')[0] %>, a <%= escort.age %> years old <%= escort.gender %> Escort from <%= escort.city %>, <%= escort.areaLabel %> area.
+                </p>
+                <div class="call">
+                  <a href="tel:<%= escort.phone %>" style="color: #25D366">
+                    CALL <%= escort.name.split(' ')[0].toUpperCase() %> &nbsp;<i class="fa fa-phone"></i>
+                  </a>
+                </div>
               </div>
-                <% });%><% } %>
+            <% }); %>
+          <% } %>
+
         </div>     
         </section>
     </div>
@@ -389,8 +408,10 @@ function updateBookmarkIcons() {
         const data = await response.json();
         if (data.success && Array.isArray(data.escorts)) {
           renderEscortCards(data.escorts);
+          prioritizeLCPImage();
         } else {
           renderEscortCards([]);
+          prioritizeLCPImage();
         }
       } catch (err) {
         console.error("Error fetching nearby:", err);
@@ -473,6 +494,38 @@ function renderEscortCards(escorts) {
   // Initial bookmark icon update
   updateBookmarkIcons();
 });
+
+function prioritizeLCPImage() {
+  const cards = document.querySelectorAll('.card img');
+
+  for (let i = 0; i < cards.length; i++) {
+    const img = cards[i];
+    const rect = img.getBoundingClientRect();
+    const inView = rect.top >= 0 && rect.top < window.innerHeight;
+
+    if (inView) {
+      // If lazy-loaded, swap to eager loading
+      if (img.dataset.src && !img.src) {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+      }
+
+      // Set fetchpriority to high
+      img.setAttribute('fetchpriority', 'high');
+
+      // Optional: preload in <head>
+      const preload = document.createElement('link');
+      preload.rel = 'preload';
+      preload.as = 'image';
+      preload.href = img.src;
+      preload.setAttribute('fetchpriority', 'high');
+      document.head.appendChild(preload);
+
+      break; // Only optimize the first visible image
+    }
+  }
+}
+
 observeCards();
 // Animate cards on entry using Intersection Observer
 function observeCards() {
