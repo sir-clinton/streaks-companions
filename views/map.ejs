@@ -13,14 +13,14 @@
   </style>
 </head>
 <body>
-    <%- include('/partials/header') %>
+    <%- include('partials/header')  %>
   <select id="citySelect">
     <option value="">-- Select City --</option>
     <option value="Nairobi">Nairobi</option>
     <option value="Kiambu">Kiambu</option>
   </select>
   <div id="map"></div>
-  <% -include('/partials/footer') %>
+ <%- include('partials/footer')  %>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
   <script>
