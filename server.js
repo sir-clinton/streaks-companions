@@ -980,24 +980,35 @@ app.get('/agencies', async (req, res) => {
   }
 });
 
+const orderRank = { bronze: 1, silver: 2, gold: 3, platinum: 4 };
+function getPureTier(tier) {
+  return tier?.toLowerCase() || 'bronze';
+}
+
 app.get('/city/:name', async (req, res) => {
-  const city = req.params.name?.trim().toLowerCase();
-  const gender = req.query.gender?.trim().toLowerCase();
-  const ageRange = req.query.age?.trim(); // e.g., "25-30"
-  const meta = generateMeta(null, city, req);
+  const rawCity = req.params.name;
+  const rawGender = req.query.gender;
+  const rawAgeRange = req.query.age;
+
+  const city = typeof rawCity === 'string' ? rawCity.trim().toLowerCase() : '';
+  const gender = typeof rawGender === 'string' ? rawGender.trim().toLowerCase() : '';
+  const ageRange = typeof rawAgeRange === 'string' ? rawAgeRange.trim() : '';
+
+  const meta = generateMeta(null, city || 'unknown', req); // Prevent slugify crash
 
   let minAge = null;
   let maxAge = null;
 
-  if (ageRange && ageRange.includes('-')) {
-    [minAge, maxAge] = ageRange.split('-').map(Number);
+  if (ageRange.includes('-')) {
+    const parts = ageRange.split('-');
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      [minAge, maxAge] = parts.map(Number);
+    }
   } else if (ageRange === '51+') {
     minAge = 51;
   }
 
-  console.log('Params:', req.params.name);
-  console.log('Query:', req.query.gender);
-
+  console.log('Filter Params:', { city, gender, ageRange });
 
   if (!city || !gender) {
     return res.status(400).render('index', {
@@ -1009,13 +1020,14 @@ app.get('/city/:name', async (req, res) => {
   }
 
   try {
-      const escortEmail = req.session?.escort?.email;
-      const escort = escortEmail ? await Escort.findOne({ email: escortEmail }) : null;
-      let escorts = await Escort.find({
-          allowedtopost: true,
-          city: { $regex: new RegExp(city, 'i') }, // Removes ^ and $
-          gender: { $regex: new RegExp(`^${gender}$`, 'i') }
-        }).lean();
+    const escortEmail = req.session?.escort?.email;
+    const escort = escortEmail ? await Escort.findOne({ email: escortEmail }) : null;
+
+    let escorts = await Escort.find({
+      allowedtopost: true,
+      city: { $regex: new RegExp(city, 'i') },
+      gender: { $regex: new RegExp(`^${gender}$`, 'i') }
+    }).lean();
 
     const boosts = await BoostRequest.find({
       status: 'confirmed',
@@ -1031,7 +1043,7 @@ app.get('/city/:name', async (req, res) => {
       .filter(e => e.about && e.userImg && e.name && e.areaLabel)
       .map(e => {
         let age = null;
-        if (e.dob) {
+        if (e.dob && !isNaN(new Date(e.dob))) {
           const bd = new Date(e.dob);
           const today = new Date();
           age = today.getFullYear() - bd.getFullYear();
@@ -1046,7 +1058,7 @@ app.get('/city/:name', async (req, res) => {
         };
       });
 
-     if (minAge !== null || maxAge !== null) {
+    if (minAge !== null || maxAge !== null) {
       escorts = escorts.filter(e => {
         if (e.age === null) return false;
         if (minAge !== null && e.age < minAge) return false;
@@ -1054,7 +1066,6 @@ app.get('/city/:name', async (req, res) => {
         return true;
       });
     }
-
 
     const boosted = escorts
       .filter(e => e.isBoosted)
@@ -1088,7 +1099,7 @@ app.get('/city/:name', async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Error in /city/:name route:', err);
+    console.error('Error in /city/:name route:', err.stack);
     res.status(500).render('index', {
       escorts: [],
       message: 'Server error while filtering.'
@@ -1797,13 +1808,15 @@ const location = {
 };
 
 function generateMeta(area = null, city = "Nairobi", req) {
-  const areaSlug = slugify(area, { lower: true });
+  const safeArea = typeof area === 'string' && area.trim() !== '' ? area : city;
+  console.log('Slug input:', area);
+  const areaSlug = slugify(safeArea, { lower: true });
   const baseUrl = `${req.protocol}://${req.get('host')}`;
 
   return {
-    title: `Verified Escorts in ${area}, ${city} | Discreet Companions & Private Meetups`,
-    description: `Explore verified escorts and discreet call girls in ${area}, ${city}. Offering luxury companionship, massages, and private meetups near you.`,
-    image: `${baseUrl}/images/previews/${areaSlug}.jpg`, // Customize per area if available
+    title: `Verified Escorts in ${safeArea}, ${city} | Discreet Companions & Private Meetups`,
+    description: `Explore verified escorts and discreet call girls in ${safeArea}, ${city}. Offering luxury companionship, massages, and private meetups near you.`,
+    image: `${baseUrl}/images/previews/${areaSlug}.jpg`,
     url: `${baseUrl}/escorts-from-${areaSlug}`
   };
 }
