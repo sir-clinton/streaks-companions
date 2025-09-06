@@ -408,10 +408,10 @@ function updateBookmarkIcons() {
         const data = await response.json();
         if (data.success && Array.isArray(data.escorts)) {
           renderEscortCards(data.escorts);
+	  observeCards(); // <-- move this here
           prioritizeLCPImage();
         } else {
-          renderEscortCards([]);
-	  observeCards(); // <-- move this here
+          renderEscortCards([])
           prioritizeLCPImage();
         }
       } catch (err) {
