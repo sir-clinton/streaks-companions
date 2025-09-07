@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Escort Locator</title>
-  <link href="/css/styles.css" rel='stylesheet'>
+
+  <!-- Stylesheets -->
+  <link href="/css/styles.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/header.css">
   <noscript><link rel="stylesheet" href="/css/header.css"></noscript>
   <link rel="stylesheet" href="/css/footer.css">
@@ -14,20 +16,42 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+
+  <!-- Inline Styling -->
   <style>
-    .container #main #map { min-height: 90vh; position: relative; z-index: 1; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); margin: 10px; }
-    .container #main select { margin: 20px auto; display: block; width: 90%; max-width: 400px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc; }
-    .container header nav .nav-wrapper div ul li a {
-      color: black;
-      transition: all .3s ease-in;
-    }
-    .container header nav .nav-wrapper div ul li a:hover {
+    body {
+      font-family: 'Satoshi', sans-serif;
+      background-color: #f8f9fa;
       color: #444;
+      margin: 0;
+      padding: 0;
     }
-    .sidebar-menu, .submenu {
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 76px 12px;
+    }
+
+    #main select {
+      margin: 20px auto;
+      display: block;
+      width: 90%;
+      max-width: 400px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    #map {
+      min-height: 90vh;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      margin: 10px;
       position: relative;
-      z-index: 10;
+      z-index: 1;
     }
+
     #map-legend {
       background: #fff;
       padding: 10px 15px;
@@ -39,135 +63,146 @@
       z-index: 999;
       font-size: 14px;
     }
+
     #map-legend ul {
       list-style: none;
       padding: 0;
       margin: 0;
     }
+
     #map-legend li {
       display: flex;
       align-items: center;
       margin-bottom: 6px;
     }
-    #map-legend img {
+
+    #map-legend i {
       width: 24px;
       height: 24px;
+      font-size: 20px;
       margin-right: 8px;
     }
   </style>
 </head>
 <body>
-<div class="container">
-  <%- include('partials/header')  %>
-  <section id="main">
-    <select id="citySelect">
-      <option value="">-- Select City --</option>
-      <option value="Nairobi">Nairobi</option>
-      <option value="Kiambu">Kiambu</option>
-    </select>
+  <div class="container">
+    <%- include('partials/header') %>
 
-<div id="map-legend">
-  <h4>Legend</h4>
-  <ul>
-    <li><i class="fas fa-map-marker-alt" style="color:gold;"></i> Gold Tier</li>
-    <li><i class="fas fa-map-marker-alt" style="color:#cd7f32;"></i> Bronze Tier</li>
-    <li><i class="fas fa-map-marker-alt" style="color:blue;"></i> Standard Tier</li>
-  </ul>
-</div>
+    <section id="main">
+      <select id="citySelect">
+        <option value="">-- Select City --</option>
+        <option value="Nairobi">Nairobi</option>
+        <option value="Kiambu">Kiambu</option>
+      </select>
 
-    <div id="map"></div>
+      <div id="map-legend">
+        <h4>Legend</h4>
+        <ul>
+          <li><i class="fas fa-map-marker-alt" style="color:gold;"></i> Gold Tier</li>
+          <li><i class="fas fa-map-marker-alt" style="color:#cd7f32;"></i> Bronze Tier</li>
+          <li><i class="fas fa-map-marker-alt" style="color:blue;"></i> Standard Tier</li>
+        </ul>
+      </div>
 
-  </section>
-</div>
-<%- include('partials/footer')  %>
-<script defer src="/js/script.js"></script>
-<script src="https://unpkg.com/slugify@1.6.6/slugify.js"></script>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-<script>
-  const map = L.map('map').setView([-1.286389, 36.817223], 12); // Default to Nairobi
+      <div id="map"></div>
+    </section>
+  </div>
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
+  <%- include('partials/footer') %>
 
-  const markers = L.markerClusterGroup();
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/slugify@1.6.6/slugify.js"></script>
+  <script defer src="/js/script.js"></script>
 
-  // Define tier-based icons using Font Awesome
-  const goldIcon = L.divIcon({
-    html: '<i class="fas fa-map-marker-alt" style="color:gold; font-size:24px;"></i>',
-    iconSize: [24, 24],
-    className: 'custom-div-icon'
-  });
+  <script>
+    const map = L.map('map').setView([-1.286389, 36.817223], 12); // Nairobi default
 
-  const bronzeIcon = L.divIcon({
-    html: '<i class="fas fa-map-marker-alt" style="color:#cd7f32; font-size:24px;"></i>',
-    iconSize: [24, 24],
-    className: 'custom-div-icon'
-  });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-  const defaultIcon = L.divIcon({
-    html: '<i class="fas fa-map-marker-alt" style="color:blue; font-size:24px;"></i>',
-    iconSize: [24, 24],
-    className: 'custom-div-icon'
-  });
+    const markers = L.markerClusterGroup();
 
-  function getIcon(tier) {
-    if (tier === 'gold') return goldIcon;
-    if (tier === 'bronze') return bronzeIcon;
-    return defaultIcon;
-  }
+    // Tier-based icons
+    const goldIcon = L.divIcon({
+      html: '<i class="fas fa-map-marker-alt" style="color:gold; font-size:24px;"></i>',
+      iconSize: [24, 24],
+      className: 'custom-div-icon'
+    });
 
-  function loadEscorts(city = '', lat = null, lng = null) {
-    let url = '/api/escorts';
-    if (city) {
-      url += `?city=${encodeURIComponent(city)}`;
-    } else if (lat && lng) {
-      url += `?lat=${lat}&lng=${lng}`;
+    const bronzeIcon = L.divIcon({
+      html: '<i class="fas fa-map-marker-alt" style="color:#cd7f32; font-size:24px;"></i>',
+      iconSize: [24, 24],
+      className: 'custom-div-icon'
+    });
+
+    const defaultIcon = L.divIcon({
+      html: '<i class="fas fa-map-marker-alt" style="color:blue; font-size:24px;"></i>',
+      iconSize: [24, 24],
+      className: 'custom-div-icon'
+    });
+
+    function getIcon(tier) {
+      if (tier === 'gold') return goldIcon;
+      if (tier === 'bronze') return bronzeIcon;
+      return defaultIcon;
     }
 
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        markers.clearLayers();
-        data.forEach(({ name, lat, lng, tier, username }) => {
-          const marker = L.marker([lat, lng], {
-            icon: getIcon(tier)
-          }).bindPopup(`
-            <strong>${name}</strong><br/>
-            Tier: ${tier}<br/>
-            <a href="/author/${encodeURIComponent(username || name)}">View Profile</a>
-          `);
-          markers.addLayer(marker);
+    function loadEscorts(city = '', lat = null, lng = null) {
+      let url = '/api/escorts';
+      if (city) {
+        url += '?city=' + encodeURIComponent(city);
+      } else if (lat && lng) {
+        url += '?lat=' + lat + '&lng=' + lng;
+      }
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          markers.clearLayers();
+          data.forEach(({ name, lat, lng, tier, username }) => {
+            const profileUrl = '/author/' + encodeURIComponent(username || name);
+            const popupHtml =
+              '<strong>' + name + '</strong><br/>' +
+              'Tier: ' + tier + '<br/>' +
+              '<a href="' + profileUrl + '">View Profile</a>';
+
+            const marker = L.marker([lat, lng], {
+              icon: getIcon(tier)
+            }).bindPopup(popupHtml);
+
+            markers.addLayer(marker);
+          });
+          map.addLayer(markers);
+        })
+        .catch(err => {
+          console.error("Error loading escorts:", err);
         });
-        map.addLayer(markers);
-      })
-      .catch(err => {
-        console.error("Error loading escorts:", err);
-      });
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const citySelect = document.getElementById('citySelect');
-    if (citySelect) {
-      citySelect.addEventListener('change', e => {
-        const city = e.target.value;
-        loadEscorts(city);
-      });
     }
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        const { latitude, longitude } = pos.coords;
-        map.setView([latitude, longitude], 13);
-        loadEscorts('', latitude, longitude);
-      }, () => {
-        loadEscorts('Nairobi'); // fallback
-      });
-    } else {
-      loadEscorts('Nairobi');
-    }
-  });
-</script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const citySelect = document.getElementById('citySelect');
+      if (citySelect) {
+        citySelect.addEventListener('change', e => {
+          const city = e.target.value;
+          loadEscorts(city);
+        });
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          map.setView([latitude, longitude], 13);
+          loadEscorts('', latitude, longitude);
+        }, () => {
+          loadEscorts('Nairobi'); // fallback
+        });
+      } else {
+        loadEscorts('Nairobi');
+      }
+    });
+  </script>
 </body>
 </html>
