@@ -1,6 +1,6 @@
 // import { escapeHTML } from './helpers.js';
 
-function sharePage() {
+function shareSite() {
   if (navigator.share) {
     navigator.share({
       title: document.title,
