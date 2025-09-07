@@ -249,7 +249,7 @@
                     </div>
                     <% } %>
                 <div class="image-wrapper">
-                    <img loading="lazy" src="<%= escort.userImg%>" alt="Meet <%= escort.name %>, <%= escort.city %> hot and verified companion in <%= escort.areaLabel %> offering massages, Dinner date & Adult Companionship" title="Meet <%= escort.name %>, <%= escort.city %> hot and verified escort in <%= escort.areaLabel %>, offering massages, Dinner date & Adult Companionship">
+                    <img data-src="<%= escort.userImg%>" alt="Meet <%= escort.name %>, <%= escort.city %> hot and verified companion in <%= escort.areaLabel %> offering massages, Dinner date & Adult Companionship" title="Meet <%= escort.name %>, <%= escort.city %> hot and verified escort in <%= escort.areaLabel %>, offering massages, Dinner date & Adult Companionship">
                 </div></a>
                 <div class="info">
                     <p class="escort-name"><%= escort.name.split(' ')[0]%></p>
@@ -282,8 +282,8 @@
         document.addEventListener('DOMContentLoaded', ()=> {
             const cards = document.querySelectorAll('.card');
             const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || []; 
-            cards.forEach(el => {
-                let info = document.querySelector('.info');
+           cards.forEach(el => {
+		let info = el.querySelector('.info'); // ✅ scoped to the current card
                 let btn = info.querySelector('button');
                 let icon = btn.querySelector('.fa-bookmark')
                 let iconId = icon.dataset.id;
@@ -364,6 +364,23 @@
         modal.style.display = "none";
     }
     }
+function observeCards() {
+  const cards = document.querySelectorAll('.card:not(.visible)');
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        const img = entry.target.querySelector('img[data-src]');
+        if (img && !img.src) img.src = img.dataset.src;
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  cards.forEach(card => observer.observe(card));
+}
+
+    observeCards(); // ✅ move this here, after cards are rendered
     });
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/slugify@1.6.6/slugify.min.js"></script>
