@@ -136,7 +136,7 @@ const defaultIcon = L.divIcon({
 	icon: getIcon(tier)}).bindPopup(`<strong>${name}</strong><br/>Tier: ${tier}`);
 	  markers.addLayer(marker);
 	});
-  }
+  });
 
   document.getElementById('citySelect').addEventListener('change', e => {
     const city = e.target.value;
