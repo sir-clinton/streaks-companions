@@ -15,7 +15,7 @@ cd<!DOCTYPE html>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
   <style>
-    .container #main #map { min-height: 90vh; }
+    .container #main #map { min-height: 90vh;  position: relative; z-index: 1; }
     .container #main select { margin: 10px; padding: 5px; }
 	.container header nav .nav-wrapper div ul li a{
 		color: black;
@@ -23,7 +23,15 @@ cd<!DOCTYPE html>
 }
 	.container header nav .nav-wrapper div ul li a:hover{
 		color: #444;
+}#map {
+ 
 }
+
+.sidebar-menu, .submenu {
+  position: relative;
+  z-index: 10;
+}
+
 	
   </style>
 </head>
