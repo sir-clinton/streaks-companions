@@ -140,7 +140,7 @@ data.forEach(({ name, lat, lng, tier }) => {
         data.forEach(({ name, lat, lng, tier }) => {
           const marker = L.marker([lat, lng], {
             icon: getIcon(tier)
-          }).bindPopup(`<strong>${name}</strong><br/>Tier: ${tier}`);
+          })..bindPopup(`<strong>${name}</strong><br/>Tier: ${tier}<br/><a href="/author/${name}">View Profile</a>`)
           markers.addLayer(marker);
         });
         map.addLayer(markers);
