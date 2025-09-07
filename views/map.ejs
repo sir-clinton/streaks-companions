@@ -127,7 +127,7 @@ const defaultIcon = L.divIcon({
       url += `?lat=${lat}&lng=${lng}`;
     }
 
-    fetch(url) {
+    fetch(url) 
       .then(res => res.json())
       .then(data => {
         markers.clearLayers();
