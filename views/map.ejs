@@ -81,6 +81,7 @@
 </div>
 <%- include('partials/footer')  %>
 <script defer src="/js/script.js"></script>
+<script src="https://unpkg.com/slugify@1.6.6/slugify.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 <script>
@@ -117,13 +118,6 @@ const defaultIcon = L.divIcon({
   return defaultIcon;
 }
 
-data.forEach(({ name, lat, lng, tier }) => {
-  const marker = L.marker([lat, lng], {
-    icon: getIcon(tier)
-  }).bindPopup(`<strong>${name}</strong><br/>Tier: ${tier}`);
-  markers.addLayer(marker);
-});
-
 
   function loadEscorts(city = '', lat = null, lng = null) {
     let url = '/api/escorts';
@@ -133,18 +127,15 @@ data.forEach(({ name, lat, lng, tier }) => {
       url += `?lat=${lat}&lng=${lng}`;
     }
 
-    fetch(url)
+    fetch(url) {
       .then(res => res.json())
       .then(data => {
         markers.clearLayers();
         data.forEach(({ name, lat, lng, tier }) => {
-          const marker = L.marker([lat, lng], {
-            icon: getIcon(tier)
-          }).bindPopup(`<strong>${name}</strong><br/>Tier: ${tier}<br/><a href="/author/${name}">View Profile</a>`)
-          markers.addLayer(marker);
-        });
-        map.addLayer(markers);
-      });
+        const marker = L.marker([lat, lng], {
+	icon: getIcon(tier)}).bindPopup(`<strong>${name}</strong><br/>Tier: ${tier}`);
+	  markers.addLayer(marker);
+	});
   }
 
   document.getElementById('citySelect').addEventListener('change', e => {
