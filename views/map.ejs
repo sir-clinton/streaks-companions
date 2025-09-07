@@ -93,65 +93,81 @@
 
   const markers = L.markerClusterGroup();
 
-  // Define tier-based icons
- const goldIcon = L.divIcon({
-  html: '<i class="fas fa-map-marker-alt" style="color:gold; font-size:24px;"></i>',
-  iconSize: [24, 24],
-  className: 'custom-div-icon'
-});
+  // Define tier-based icons using Font Awesome
+  const goldIcon = L.divIcon({
+    html: '<i class="fas fa-map-marker-alt" style="color:gold; font-size:24px;"></i>',
+    iconSize: [24, 24],
+    className: 'custom-div-icon'
+  });
 
-const bronzeIcon = L.divIcon({
-  html: '<i class="fas fa-map-marker-alt" style="color:#cd7f32; font-size:24px;"></i>',
-  iconSize: [24, 24],
-  className: 'custom-div-icon'
-});
+  const bronzeIcon = L.divIcon({
+    html: '<i class="fas fa-map-marker-alt" style="color:#cd7f32; font-size:24px;"></i>',
+    iconSize: [24, 24],
+    className: 'custom-div-icon'
+  });
 
-const defaultIcon = L.divIcon({
-  html: '<i class="fas fa-map-marker-alt" style="color:blue; font-size:24px;"></i>',
-  iconSize: [24, 24],
-  className: 'custom-div-icon'
-});
+  const defaultIcon = L.divIcon({
+    html: '<i class="fas fa-map-marker-alt" style="color:blue; font-size:24px;"></i>',
+    iconSize: [24, 24],
+    className: 'custom-div-icon'
+  });
 
- function getIcon(tier) {
-  if (tier === 'gold') return goldIcon;
-  if (tier === 'bronze') return bronzeIcon;
-  return defaultIcon;
-}
-
+  function getIcon(tier) {
+    if (tier === 'gold') return goldIcon;
+    if (tier === 'bronze') return bronzeIcon;
+    return defaultIcon;
+  }
 
   function loadEscorts(city = '', lat = null, lng = null) {
     let url = '/api/escorts';
     if (city) {
-      url += `?city=${city}`;
+      url += `?city=${encodeURIComponent(city)}`;
     } else if (lat && lng) {
       url += `?lat=${lat}&lng=${lng}`;
     }
 
-    fetch(url) 
+    fetch(url)
       .then(res => res.json())
       .then(data => {
         markers.clearLayers();
-        data.forEach(({ name, lat, lng, tier }) => {
-        const marker = L.marker([lat, lng], {
-	icon: getIcon(tier)}).bindPopup(`<strong>${name}</strong><br/>Tier: ${tier}`);
-	  markers.addLayer(marker);
-	});
-  });
-
-  document.getElementById('citySelect').addEventListener('change', e => {
-    const city = e.target.value;
-    loadEscorts(city);
-  });
-
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      const { latitude, longitude } = pos.coords;
-      map.setView([latitude, longitude], 13);
-      loadEscorts('', latitude, longitude);
-    });
-  } else {
-    loadEscorts('Nairobi');
+        data.forEach(({ name, lat, lng, tier, username }) => {
+          const marker = L.marker([lat, lng], {
+            icon: getIcon(tier)
+          }).bindPopup(`
+            <strong>${name}</strong><br/>
+            Tier: ${tier}<br/>
+            <a href="/author/${encodeURIComponent(username || name)}">View Profile</a>
+          `);
+          markers.addLayer(marker);
+        });
+        map.addLayer(markers);
+      })
+      .catch(err => {
+        console.error("Error loading escorts:", err);
+      });
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const citySelect = document.getElementById('citySelect');
+    if (citySelect) {
+      citySelect.addEventListener('change', e => {
+        const city = e.target.value;
+        loadEscorts(city);
+      });
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        const { latitude, longitude } = pos.coords;
+        map.setView([latitude, longitude], 13);
+        loadEscorts('', latitude, longitude);
+      }, () => {
+        loadEscorts('Nairobi'); // fallback
+      });
+    } else {
+      loadEscorts('Nairobi');
+    }
+  });
 </script>
 </body>
 </html>
