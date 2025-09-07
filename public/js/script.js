@@ -1,5 +1,18 @@
 // import { escapeHTML } from './helpers.js';
 
+function sharePage() {
+  if (navigator.share) {
+    navigator.share({
+      title: document.title,
+      text: "Check out this page!",
+      url: window.location.href
+    })
+    .then(() => console.log('Shared successfully'))
+    .catch((error) => console.error('Error sharing:', error));
+  } else {
+    alert("Sharing not supported on this browser.");
+  }
+}
 
 const bars = document.querySelector('#menu-icon');
 const container = document.querySelector('.header');

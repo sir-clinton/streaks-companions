@@ -199,7 +199,7 @@ form button[type=submit]{
     padding: 4px 12px;
     white-space: nowrap;
     /* margin: 20px  0 0 0; */
-}.card .call:hover{
+}.card .call:hover a, .card .call:hover a i{
     color: white;
     background-color: #25D366;
 }.card .call i{
@@ -271,7 +271,7 @@ form button[type=submit]{
 .bronze {
   background-color: #cd7f32;
 }.fa-bookmark {
-	width: 30px;
-	height: 30px;
-	font-size: 24px;
+	width: 28px;
+	height: 28px;
+	font-size: 20px;
 }
