@@ -1330,7 +1330,6 @@ app.post('/forgot-password', async (req, res) => {
       pass: process.env.EMAIL_PASS
     }
   });
-  console.log(process.env.EMAIL_USER, process.env.EMAIL_PASS, mailOptions);
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -1414,7 +1413,7 @@ app.post('/resend-reset-link', async (req, res) => {
     subject: 'Your Password Reset',
     html: `
       <p>Hi, Click the link below to reset your password.</p>
-      <a href="https://streak-1.onrender.com/reset-password?token=${token}">Reset Password</a>
+      <a href="http://192.168.0.101:3000/reset-password?token=${token}">Reset Password</a>
       <p>If you didn't request this, please ignore.</p>
     `
   };
