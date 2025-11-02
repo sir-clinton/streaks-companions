@@ -139,6 +139,60 @@ button[type="button"]:hover {
   }.bookmark-btn {
   transition: color 0.3s ease;
 }
+.age-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .age-box {
+      background: #222;
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      max-width: 90%;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    }
+
+    .age-box h2 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .age-box button {
+      margin: 0.5rem;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .yes-btn {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .no-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .age-box h2 {
+        font-size: 1.2rem;
+      }
+
+      .age-box button {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+    }
   @media (max-width: 480px) {
   .modal-content {
     width: 95%;
@@ -263,6 +317,14 @@ button[type="button"]:hover {
         </section>
     </div>
 
+  <div class="age-modal" id="ageModal">
+  <div class="age-box">
+    <h2>Are you 18 years or older?</h2>
+    <button class="yes-btn" onclick="allowAccess()">Yes</button>
+    <button class="no-btn" onclick="denyAccess()">No</button>
+  </div>
+</div>
+
     <div id="bookmarkModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bookmarkModalTitle">
   <div class="modal-content">
     <span class="close-btn">&times;</span>
@@ -278,6 +340,13 @@ button[type="button"]:hover {
     <script defer>
 document.addEventListener('DOMContentLoaded', () => {
 
+  function allowAccess() {
+    document.getElementById('ageModal').style.display = 'none';
+  }
+
+  function denyAccess() {
+    window.location.href = 'https://www.google.com'; // Redirect if underage
+  }
   
   let isProcessing = false;
 
