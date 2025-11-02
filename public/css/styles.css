@@ -205,7 +205,7 @@ form button[type=submit]{
 }.card .call i{
     color:#25D366;
 }
-.card .call:hover i{
+.card .call:hover a{
     color: white;
 }.card .info{
     padding: 5px 32px;
