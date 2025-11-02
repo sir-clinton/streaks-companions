@@ -338,16 +338,22 @@ button[type="button"]:hover {
      <%- include('partials/footer')  %>
     <script defer src="https://cdn.jsdelivr.net/npm/slugify@1.6.6/slugify.min.js"></script>
     <script defer src="/js/script.js"></script>
-    <script defer>
-document.addEventListener('DOMContentLoaded', () => {
-
+    <script>
   function allowAccess() {
     document.getElementById('ageModal').style.display = 'none';
   }
 
   function denyAccess() {
-    window.location.href = 'https://www.google.com'; // Redirect if underage
+    window.location.href = 'https://www.google.com';
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // All your other logic stays here
+  });
+</script>
+
+    <script defer>
+document.addEventListener('DOMContentLoaded', () => {
   
   let isProcessing = false;
 
