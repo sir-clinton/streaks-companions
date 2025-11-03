@@ -280,6 +280,59 @@
     <%- include('partials/footer') %>
     <script defer>
         document.addEventListener('DOMContentLoaded', ()=> {
+
+function renderEscortCards(escorts) {
+  const listings = document.getElementById("listings");
+  listings.innerHTML = "";
+
+  if (escorts.length === 0) {
+    listings.innerHTML = `<p style="position: absolute; top:50%; left: 50%; transform: translateX(-50%)">No nearby escorts found. Try again later</p>`;
+    return;
+  }
+
+  let html = "";
+  escorts.forEach(escort => {
+    const name = escort.name.split(' ')[0];
+    html += `
+      <div class="card" style="display: flex;">
+        <a href="/author/${escort.name}" data-id="${escort._id}">
+          ${escort.isBoosted ? `<div class="badge ${escort.boostType}">${escort.boostType}</div>` : ''}
+          <div class="image-wrapper">
+            <img width="200" height="200" data-src="${escort.userImg}" alt="${name}, a ${escort.age}-year-old ${escort.gender} escort in ${escort.areaLabel}, ${escort.city}">
+          </div>
+        </a>
+        <div class="info">
+          <p class="escort-name">${name}</p>
+          <span aria-label="Bookmark profile">
+            <i title="Bookmark this profile" class="fa-solid fa-bookmark bookmark-btn"
+              role="button"
+              tabindex="0"
+              aria-label="Bookmark profile of ${name}"
+              data-id="${escort._id}"
+              data-name="${name}"
+              data-img="${escort.userImg}"
+              data-phone="${escort.phone}"
+              style="color: #444"></i>
+          </span>
+        </div>
+        <hr>
+        <p style="padding: 4px;color: #6c757d;">
+          Meet ${name}, a ${escort.age} years old ${escort.gender} Escort from ${escort.city}, ${escort.areaLabel} area.
+        </p>
+        <div class="call">
+          <a href="tel:${escort.phone}" style="color: #25D366">
+            CALL ${name.toUpperCase()} &nbsp;<i class="fa fa-phone"></i>
+          </a>
+        </div>
+      </div>
+    `;
+  });
+
+  listings.innerHTML = html;
+  updateBookmarkIcons();
+  observeCards();
+}
+
             const cards = document.querySelectorAll('.card');
             const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || []; 
            cards.forEach(el => {
@@ -316,6 +369,7 @@
     }
   });
 });
+
 
   // Show modal trigger (e.g. icon, button)
     document.getElementById('openBookmarkModal').addEventListener('click', () => {
