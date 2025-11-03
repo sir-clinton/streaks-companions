@@ -337,21 +337,23 @@ button[type="button"]:hover {
      <%- include('partials/footer')  %>
     <script defer src="https://cdn.jsdelivr.net/npm/slugify@1.6.6/slugify.min.js"></script>
     <script defer src="/js/script.js"></script>
-    <script>
+   <script>
+  // Show modal only if user hasn't verified age before
+  if (!localStorage.getItem('ageVerified')) {
+    document.getElementById('ageModal').style.display = 'flex';
+  }
+
   function allowAccess() {
+    localStorage.setItem('ageVerified', 'true'); // Persist across sessions
     document.getElementById('ageModal').style.display = 'none';
   }
 
   function denyAccess() {
-    window.location.href = 'https://www.google.com';
+    window.location.href = 'https://www.google.com'; // Redirect if underage
   }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    // All your other logic stays here
-  });
 </script>
 
-    <script defer>
+<script defer>
 document.addEventListener('DOMContentLoaded', () => {
   
   let isProcessing = false;
