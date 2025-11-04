@@ -279,165 +279,151 @@
     </div>
     <%- include('partials/footer') %>
     <script defer>
-        document.addEventListener('DOMContentLoaded', ()=> {
+document.addEventListener('DOMContentLoaded', () => {
 
-function renderEscortCards(escorts) {
-  const listings = document.getElementById("listings");
-  listings.innerHTML = "";
+  function renderEscortCards(escorts) {
+    const listings = document.getElementById("listings");
+    listings.innerHTML = "";
 
-  if (escorts.length === 0) {
-    listings.innerHTML = `<p style="position: absolute; top:50%; left: 50%; transform: translateX(-50%)">No nearby escorts found. Try again later</p>`;
-    return;
+    if (escorts.length === 0) {
+      listings.innerHTML = `<p style="position: absolute; top:50%; left: 50%; transform: translateX(-50%)">No nearby escorts found. Try again later</p>`;
+      return;
+    }
+
+    let html = "";
+    escorts.forEach((escort, i) => {
+      const name = escort.name.split(' ')[0];
+      const imgTag = i === 0
+        ? `<img width="200" height="200" src="${escort.userImg}" fetchpriority="high" alt="${name}, a ${escort.age}-year-old ${escort.gender} escort in ${escort.areaLabel}, ${escort.city}">`
+        : `<img width="200" height="200" data-src="${escort.userImg}" alt="${name}, a ${escort.age}-year-old ${escort.gender} escort in ${escort.areaLabel}, ${escort.city}">`;
+
+      html += `
+        <div class="card" style="display: flex;">
+          <a href="/author/${escort.name}" data-id="${escort._id}">
+            ${escort.isBoosted ? `<div class="badge ${escort.boostType}">${escort.boostType}</div>` : ''}
+            <div class="image-wrapper">${imgTag}</div>
+          </a>
+          <div class="info">
+            <p class="escort-name">${name}</p>
+            <span aria-label="Bookmark profile">
+              <i title="Bookmark this profile" class="fa-solid fa-bookmark bookmark-btn"
+                role="button"
+                tabindex="0"
+                aria-label="Bookmark profile of ${name}"
+                data-id="${escort._id}"
+                data-name="${name}"
+                data-img="${escort.userImg}"
+                data-phone="${escort.phone}"
+                style="color: #444"></i>
+            </span>
+          </div>
+          <hr>
+          <p style="padding: 4px;color: #6c757d;">
+            Meet ${name}, a ${escort.age} years old ${escort.gender} Escort from ${escort.city}, ${escort.areaLabel} area.
+          </p>
+          <div class="call">
+            <a href="tel:${escort.phone}" style="color: #25D366">
+              CALL ${name.toUpperCase()} &nbsp;<i class="fa fa-phone"></i>
+            </a>
+          </div>
+        </div>
+      `;
+    });
+
+    listings.innerHTML = html;
+    updateBookmarkIcons();
+    observeCards();
   }
 
-  let html = "";
-  escorts.forEach(escort => {
-    const name = escort.name.split(' ')[0];
-    html += `
-      <div class="card" style="display: flex;">
-        <a href="/author/${escort.name}" data-id="${escort._id}">
-          ${escort.isBoosted ? `<div class="badge ${escort.boostType}">${escort.boostType}</div>` : ''}
-          <div class="image-wrapper">
-            <img width="200" height="200" data-src="${escort.userImg}" src="${escort.userImg}" alt="${name}, a ${escort.age}-year-old ${escort.gender} escort in ${escort.areaLabel}, ${escort.city}">
-          </div>
-        </a>
-        <div class="info">
-          <p class="escort-name">${name}</p>
-          <span aria-label="Bookmark profile">
-            <i title="Bookmark this profile" class="fa-solid fa-bookmark bookmark-btn"
-              role="button"
-              tabindex="0"
-              aria-label="Bookmark profile of ${name}"
-              data-id="${escort._id}"
-              data-name="${name}"
-              data-img="${escort.userImg}"
-              data-phone="${escort.phone}"
-              style="color: #444"></i>
-          </span>
-        </div>
-        <hr>
-        <p style="padding: 4px;color: #6c757d;">
-          Meet ${name}, a ${escort.age} years old ${escort.gender} Escort from ${escort.city}, ${escort.areaLabel} area.
-        </p>
-        <div class="call">
-          <a href="tel:${escort.phone}" style="color: #25D366">
-            CALL ${name.toUpperCase()} &nbsp;<i class="fa fa-phone"></i>
-          </a>
-        </div>
-      </div>
-    `;
-  });
+  function updateBookmarkIcons() {
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || [];
+    document.querySelectorAll('.bookmark-btn').forEach(icon => {
+      const iconId = icon.dataset.id;
+      const isBookmarked = bookmarks.some(item => item.id === iconId);
+      icon.style.color = isBookmarked ? '#25D366' : '#444';
+    });
+  }
 
-  listings.innerHTML = html;
-  updateBookmarkIcons();
-  observeCards();
-}
+  document.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('bookmark-btn')) return;
 
-            const cards = document.querySelectorAll('.card');
-            const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || []; 
-           cards.forEach(el => {
-		let info = el.querySelector('.info'); // ✅ scoped to the current card
-                let btn = info.querySelector('button');
-                let icon = btn.querySelector('.fa-bookmark')
-                let iconId = icon.dataset.id;
+    const icon = e.target;
+    const { id, name, img, phone } = icon.dataset;
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || [];
+    const isBookmarked = bookmarks.some(item => item.id === id);
 
-            const isAlreadyBookmarked = bookmarks.some(item => item.id === iconId);
-
-            if (isAlreadyBookmarked) {
-            icon.style.color = '#25D366'; // Green
-            }})
-
-            document.querySelectorAll('.bookmark-btn').forEach(icon => {
-  icon.addEventListener('click', (e) => {
-    e.preventDefault();
-    const id = icon.dataset.id;
-    const name = icon.dataset.name;
-    const img = icon.dataset.img;
-    const phone = icon.dataset.phone
-
-    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || []; // ✅ Fresh copy per click
-    const isAlreadyBookmarked = bookmarks.some(item => item.id === id);
-
-    if (!isAlreadyBookmarked) {
-      bookmarks.push({ id, name, img, phone});
-      localStorage.setItem('bookmarkedEscorts', JSON.stringify(bookmarks));
-      icon.style.color = '#25D366'; // Green
+    if (!isBookmarked) {
+      bookmarks.push({ id, name, img, phone });
+      icon.style.color = '#25D366';
     } else {
       const updated = bookmarks.filter(item => item.id !== id);
       localStorage.setItem('bookmarkedEscorts', JSON.stringify(updated));
-      icon.style.color = '#444'; // Grey
+      icon.style.color = '#444';
     }
+
+    localStorage.setItem('bookmarkedEscorts', JSON.stringify(bookmarks));
   });
-});
 
-
-  // Show modal trigger (e.g. icon, button)
-    document.getElementById('openBookmarkModal').addEventListener('click', () => {
+  document.getElementById('openBookmarkModal').addEventListener('click', () => {
     const modal = document.getElementById('bookmarkModal');
     const list = document.getElementById('bookmarkedList');
     const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || [];
 
-    list.innerHTML = bookmarks.length === 0 ? 
-    "<p>No bookmarks yet.</p>" : 
-    bookmarks.map(item => `
+    list.innerHTML = bookmarks.length === 0
+      ? "<p>No bookmarks yet.</p>"
+      : bookmarks.map(item => `
         <div style="margin-bottom: 12px; display: flex; align-items: center">
-        <img src="${item.img}" alt="${item.name}" width="60" style="border-radius:5px;">
-        <a href="/author/${item.name}" class="copy-number-btn" data-name="${item.name.split(' ')[0]}" data-phone="${item.phone}" style="margin-left:8px; flex: 1; text-decoration: underline; cursor: pointer;">
+          <img src="${item.img}" alt="${item.name}" width="60" style="border-radius:5px;">
+          <a href="/author/${item.name}" class="copy-number-btn" data-name="${item.name.split(' ')[0]}" data-phone="${item.phone}" style="margin-left:8px; flex: 1; text-decoration: underline; cursor: pointer;">
             View ${item.name}'s profile.
-        </a>
-        <button class="remove-bookmark" data-id="${item.id}" style="background: none; border: none; color: #c0392b; cursor: pointer;">✕</button>
+          </a>
+          <button class="remove-bookmark" data-id="${item.id}" style="background: none; border: none; color: #c0392b; cursor: pointer;">✕</button>
         </div>
-    `).join('');
-    document.querySelectorAll('.remove-bookmark').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-        const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || []; // ✅ fresh copy
-        const updatedBookmarks = bookmarks.filter(item => item.id !== id);
-        localStorage.setItem('bookmarkedEscorts', JSON.stringify(updatedBookmarks));
-        btn.parentElement.remove();
+      `).join('');
 
-        if (updatedBookmarks.length === 0) {
-        document.getElementById('bookmarkModal').style.display = 'none';
-        }
-    });
+    list.querySelectorAll('.remove-bookmark').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const updated = bookmarks.filter(item => item.id !== id);
+        localStorage.setItem('bookmarkedEscorts', JSON.stringify(updated));
+        btn.parentElement.remove();
+        if (updated.length === 0) modal.style.display = 'none';
+      });
     });
 
     modal.style.display = "flex";
-    });
+  });
 
-
-    // Close modal
-    document.querySelector('.close-btn').onclick = function () {
+  document.querySelector('.close-btn').onclick = () => {
     document.getElementById('bookmarkModal').style.display = "none";
-    };
+  };
 
-    // Close on outside click
-    window.onclick = function(event) {
+  window.onclick = (event) => {
     const modal = document.getElementById('bookmarkModal');
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-    }
-function observeCards() {
-  const cards = document.querySelectorAll('.card:not(.visible)');
-  const observer = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        const img = entry.target.querySelector('img[data-src]');
-        if (img && !img.src) img.src = img.dataset.src;
-        obs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.2 });
+    if (event.target === modal) modal.style.display = "none";
+  };
 
-  cards.forEach(card => observer.observe(card));
-}
+  function observeCards() {
+    const cards = document.querySelectorAll('.card:not(.visible)');
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          const img = entry.target.querySelector('img[data-src]');
+          if (img && !img.src) img.src = img.dataset.src;
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
 
-    observeCards(); // ✅ move this here, after cards are rendered
-    });
-    </script>
-    <script defer src="https://cdn.jsdelivr.net/npm/slugify@1.6.6/slugify.min.js"></script>
+    cards.forEach(card => observer.observe(card));
+  }
+
+  observeCards(); // Initial run for static cards
+
+});
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/slugify@1.6.6/slugify.min.js"></script>
     <script defer src="/js/script.js"></script>
     <script defer src="/js/gallery.js"></script>
     <script defer type="application/ld+json">
