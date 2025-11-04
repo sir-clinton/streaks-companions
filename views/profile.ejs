@@ -298,7 +298,7 @@ function renderEscortCards(escorts) {
         <a href="/author/${escort.name}" data-id="${escort._id}">
           ${escort.isBoosted ? `<div class="badge ${escort.boostType}">${escort.boostType}</div>` : ''}
           <div class="image-wrapper">
-            <img width="200" height="200" data-src="${escort.userImg}" alt="${name}, a ${escort.age}-year-old ${escort.gender} escort in ${escort.areaLabel}, ${escort.city}">
+            <img width="200" height="200" data-src="${escort.userImg}" src="${escort.userImg}" alt="${name}, a ${escort.age}-year-old ${escort.gender} escort in ${escort.areaLabel}, ${escort.city}">
           </div>
         </a>
         <div class="info">
