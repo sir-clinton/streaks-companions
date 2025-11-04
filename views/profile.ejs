@@ -249,7 +249,7 @@
                     </div>
                     <% } %>
                 <div class="image-wrapper">
-                    <img data-src="<%= escort.userImg%>" alt="Meet <%= escort.name %>, <%= escort.city %> hot and verified companion in <%= escort.areaLabel %> offering massages, Dinner date & Adult Companionship" title="Meet <%= escort.name %>, <%= escort.city %> hot and verified escort in <%= escort.areaLabel %>, offering massages, Dinner date & Adult Companionship">
+                    <img data-src="<%= escort.userImg%>" src="<%= escort.userImg %>" alt="Meet <%= escort.name %>, <%= escort.city %> hot and verified companion in <%= escort.areaLabel %> offering massages, Dinner date & Adult Companionship" title="Meet <%= escort.name %>, <%= escort.city %> hot and verified escort in <%= escort.areaLabel %>, offering massages, Dinner date & Adult Companionship">
                 </div></a>
                 <div class="info">
                     <p class="escort-name"><%= escort.name.split(' ')[0]%></p>
@@ -277,7 +277,18 @@
             </div>
     </section>
     </div>
-    <%- include('partials/footer') %>
+
+     <div id="bookmarkModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bookmarkModalTitle">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h3 id="bookmarkModalTitle">Your Bookmarked Escorts</h3>
+    <div id="bookmarkedList"></div>
+  </div>
+</div>
+<i class="fa-solid fa-bookmark" id="openBookmarkModal" title="Saved Profiles"></span></i>
+
+
+<%- include('partials/footer') %>
 <script defer>
 document.addEventListener('DOMContentLoaded', () => {
 
