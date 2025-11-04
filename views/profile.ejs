@@ -278,9 +278,10 @@
     </section>
     </div>
     <%- include('partials/footer') %>
-    <script defer>
+<script defer>
 document.addEventListener('DOMContentLoaded', () => {
 
+  // 🔧 Render escort cards
   function renderEscortCards(escorts) {
     const listings = document.getElementById("listings");
     listings.innerHTML = "";
@@ -335,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     observeCards();
   }
 
+  // ✅ Bookmark icon updater
   function updateBookmarkIcons() {
     const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || [];
     document.querySelectorAll('.bookmark-btn').forEach(icon => {
@@ -344,55 +346,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ✅ Bookmark toggler
   document.addEventListener('click', (e) => {
     if (!e.target.classList.contains('bookmark-btn')) return;
 
     const icon = e.target;
     const { id, name, img, phone } = icon.dataset;
-    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || [];
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || [];
     const isBookmarked = bookmarks.some(item => item.id === id);
 
     if (!isBookmarked) {
       bookmarks.push({ id, name, img, phone });
       icon.style.color = '#25D366';
     } else {
-      const updated = bookmarks.filter(item => item.id !== id);
-      localStorage.setItem('bookmarkedEscorts', JSON.stringify(updated));
+      bookmarks = bookmarks.filter(item => item.id !== id);
       icon.style.color = '#444';
     }
 
     localStorage.setItem('bookmarkedEscorts', JSON.stringify(bookmarks));
   });
 
-  document.getElementById('openBookmarkModal').addEventListener('click', () => {
-    const modal = document.getElementById('bookmarkModal');
-    const list = document.getElementById('bookmarkedList');
-    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || [];
+  // ✅ Bookmark modal
+  const bookmarkTrigger = document.getElementById('openBookmarkModal');
+  if (bookmarkTrigger) {
+    bookmarkTrigger.addEventListener('click', () => {
+      const modal = document.getElementById('bookmarkModal');
+      const list = document.getElementById('bookmarkedList');
+      const bookmarks = JSON.parse(localStorage.getItem('bookmarkedEscorts')) || [];
 
-    list.innerHTML = bookmarks.length === 0
-      ? "<p>No bookmarks yet.</p>"
-      : bookmarks.map(item => `
-        <div style="margin-bottom: 12px; display: flex; align-items: center">
-          <img src="${item.img}" alt="${item.name}" width="60" style="border-radius:5px;">
-          <a href="/author/${item.name}" class="copy-number-btn" data-name="${item.name.split(' ')[0]}" data-phone="${item.phone}" style="margin-left:8px; flex: 1; text-decoration: underline; cursor: pointer;">
-            View ${item.name}'s profile.
-          </a>
-          <button class="remove-bookmark" data-id="${item.id}" style="background: none; border: none; color: #c0392b; cursor: pointer;">✕</button>
-        </div>
-      `).join('');
+      list.innerHTML = bookmarks.length === 0
+        ? "<p>No bookmarks yet.</p>"
+        : bookmarks.map(item => `
+          <div style="margin-bottom: 12px; display: flex; align-items: center">
+            <img src="${item.img}" alt="${item.name}" width="60" style="border-radius:5px;">
+            <a href="/author/${item.name}" class="copy-number-btn" data-name="${item.name.split(' ')[0]}" data-phone="${item.phone}" style="margin-left:8px; flex: 1; text-decoration: underline; cursor: pointer;">
+              View ${item.name}'s profile.
+            </a>
+            <button class="remove-bookmark" data-id="${item.id}" style="background: none; border: none; color: #c0392b; cursor: pointer;">✕</button>
+          </div>
+        `).join('');
 
-    list.querySelectorAll('.remove-bookmark').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-        const updated = bookmarks.filter(item => item.id !== id);
-        localStorage.setItem('bookmarkedEscorts', JSON.stringify(updated));
-        btn.parentElement.remove();
-        if (updated.length === 0) modal.style.display = 'none';
+      list.querySelectorAll('.remove-bookmark').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const updated = bookmarks.filter(item => item.id !== id);
+          localStorage.setItem('bookmarkedEscorts', JSON.stringify(updated));
+          btn.parentElement.remove();
+          if (updated.length === 0) modal.style.display = 'none';
+        });
       });
-    });
 
-    modal.style.display = "flex";
-  });
+      modal.style.display = "flex";
+    });
+  }
 
   document.querySelector('.close-btn').onclick = () => {
     document.getElementById('bookmarkModal').style.display = "none";
@@ -403,6 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (event.target === modal) modal.style.display = "none";
   };
 
+  // ✅ Lazy-load observer
   function observeCards() {
     const cards = document.querySelectorAll('.card:not(.visible)');
     const observer = new IntersectionObserver((entries, obs) => {
