@@ -148,6 +148,7 @@ button[type="button"]:hover {
       justify-content: center;
       align-items: center;
       z-index: 9999;
+      display: none;
     }
 
     .age-box {
@@ -345,10 +346,21 @@ button[type="button"]:hover {
 
   function allowAccess() {
     localStorage.setItem('ageVerified', 'true'); // Persist across sessions
-    document.getElementById('ageModal').style.display = 'none';
+    checkbox();
   }
 
+  function checkbox() {
+      if(localStorage.getItem('ageVerified')) {
+        document.getElementById('ageModal').style.display = 'none';
+    }else {
+        document.getElementById('ageModal').style.display = 'block';
+    }
+  }
+
+  checkbox();
+
   function denyAccess() {
+    localStorage.setItem('ageVerified', 'false'); // Persist across sessions
     window.location.href = 'https://www.google.com'; // Redirect if underage
   }
 </script>
