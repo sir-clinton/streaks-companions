@@ -343,25 +343,26 @@ button[type="button"]:hover {
     document.getElementById('ageModal').style.display = 'flex';
   }
 
-  function allowAccess() {
-    localStorage.setItem('ageVerified', 'true'); // Persist across sessions
-    checkbox();
-  }
+ function allowAccess() {
+  sessionStorage.setItem('ageVerified', 'true');
+  checkbox();
+}
 
-  function checkbox() {
-      if(localStorage.getItem('ageVerified') !== 'true') {
-        document.getElementById('ageModal').style.display = 'none';
-    }else {
-        document.getElementById('ageModal').style.display = 'flex';
-    }
+
+ function checkbox() {
+  if (sessionStorage.getItem('ageVerified') === 'true') {
+    document.getElementById('ageModal').style.display = 'none';
+  } else {
+    document.getElementById('ageModal').style.display = 'flex';
   }
+}
 
   checkbox();
 
-  function denyAccess() {
-    localStorage.setItem('ageVerified', 'false'); // Persist across sessions
-    window.location.href = 'https://www.google.com'; // Redirect if underage
-  }
+ function denyAccess() {
+  sessionStorage.setItem('ageVerified', 'false');
+  window.location.href = 'https://www.google.com';
+}
 </script>
 
 <script defer>
