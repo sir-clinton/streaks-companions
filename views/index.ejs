@@ -339,11 +339,12 @@ button[type="button"]:hover {
     <script defer src="/js/script.js"></script>
    <script>
   // Show modal only if user hasn't verified age before
-  if (!localStorage.getItem('ageVerified')) {
-    document.getElementById('ageModal').style.display = 'flex';
-  }
+  // ✅ Corrected check
+if (sessionStorage.getItem('ageVerified') !== 'true') {
+  document.getElementById('ageModal').style.display = 'flex';
+}
 
- function allowAccess() {
+function allowAccess() {
   sessionStorage.setItem('ageVerified', 'true');
   checkbox();
 }
