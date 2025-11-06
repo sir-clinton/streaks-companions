@@ -146,7 +146,11 @@
             #about-display{
                 max-width: 680px;               
                 margin-bottom: 10px;
-            }
+            }.fa-bookmark.active {
+    color: #25D366;
+  }.bookmark-btn {
+  transition: color 0.3s ease;
+}
             .modal {
   display: none;
   align-items: center;
@@ -344,7 +348,7 @@
     </section>
     </div>
 
-     <div id="bookmarkModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bookmarkModalTitle">
+   <div id="bookmarkModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bookmarkModalTitle">
   <div class="modal-content">
     <span class="close-btn">&times;</span>
     <h3 id="bookmarkModalTitle">Your Bookmarked Escorts</h3>
@@ -352,7 +356,6 @@
   </div>
 </div>
 <i class="fa-solid fa-bookmark" id="openBookmarkModal" title="Saved Profiles"></span></i>
-
 
 <%- include('partials/footer') %>
 <script defer>
