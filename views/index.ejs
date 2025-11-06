@@ -349,7 +349,7 @@ button[type="button"]:hover {
   }
 
   function checkbox() {
-      if(localStorage.getItem('ageVerified')) {
+      if(localStorage.getItem('ageVerified') !== 'true') {
         document.getElementById('ageModal').style.display = 'none';
     }else {
         document.getElementById('ageModal').style.display = 'flex';
