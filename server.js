@@ -1226,7 +1226,13 @@ app.post('/register-agency', async (req, res) => {
       subject: 'Email Verification',
       html: `
         <p>Hi ${agency.agencyName}, Please verify your agency email by clicking the link below.</p>
-        <a href="https://streak-1.onrender.com/verify/${verificationToken}">Verify Email</a>
+        <button style=" margin: 0.5rem;
+      background: #28a745;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;"><a style="text-decoration: none; color: black;" href="https://streak-1.onrender.com/verify/${verificationToken}">Verify Email</a></button>
         <p>This link will expire on <strong>${expiryDate}</strong>.</p>
         <p>If it expires, you can request a new one from the login page.</p>
       `
@@ -1337,7 +1343,13 @@ app.post('/forgot-password', async (req, res) => {
     subject: 'Your Password Reset Link',
     html: `
       <p>Hi, Click the link below to reset your password.</p>
-      <a href="https://streak-1.onrender.com/reset-password?token=${token}">Reset Password</a>
+      <button style=" margin: 0.5rem;
+      background: #28a745;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;"><a style="text-decoration: none; color: black;"href="https://streak-1.onrender.com/reset-password?token=${token}">Reset Password</a></button>
       <p>If you didn't request this, please ignore.</p>
     `
   };
