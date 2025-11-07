@@ -106,6 +106,9 @@
     <option value="3 Some">3 Some</option>
   </select>
 
+  <label>Password</label>
+<input type="password" name="password" required />
+
   <button type="submit">Submit Escort</button>
 </form>
 
@@ -147,26 +150,28 @@
     const base64Image = reader.result;
 
     const data = {
-      name: form.name.value,
-      email: form.email.value,
-      phone: form.phone.value,
-      dob: form.dob.value,
-      gender: form.gender.value,
-      orientation: form.orientation.value,
-      weight: form.weight.value,
-      city: form.city.value,
-      areaLabel: form.areaLabel.value,
-      location: {
-        type: "Point",
-        coordinates: form.coordinates.value.split(',').map(Number)
-      },
-      services: Array.from(form.services.selectedOptions).map(opt => opt.value),
-      allowedtopost: true,
-      userImg: base64Image
-    };
+  name: form.name.value,
+  email: form.email.value,
+  password: form.password.value, // added
+  phone: form.phone.value,
+  dob: form.dob.value,
+  gender: form.gender.value,
+  orientation: form.orientation.value,
+  weight: form.weight.value,
+  city: form.city.value,
+  areaLabel: form.areaLabel.value,
+  location: {
+    type: "Point",
+    coordinates: form.coordinates.value.split(',').map(Number)
+  },
+  services: Array.from(form.services.selectedOptions).map(opt => opt.value),
+  allowedtopost: true,
+  userImg: base64Image
+};
+
 
     try {
-      const res = await fetch('/api/escorts', {
+      const res = await fetch('/admin/create-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

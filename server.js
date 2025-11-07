@@ -1270,6 +1270,66 @@ app.get('/verify/:token', async (req, res) => {
   res.redirect('/login');
 });
 
+app.post('/admin/create-user', async (req, res) => {
+  try {
+    // Optional: verify admin session or token
+    if (req.session?.escort?.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const {
+      name,
+      email,
+      password,
+      phone,
+      dob,
+      gender,
+      orientation,
+      weight,
+      city,
+      areaLabel,
+      location,
+      services,
+      userImg
+    } = req.body;
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const existingUser = await Escort.findOne({ email: normalizedEmail });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'Email already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new Escort({
+      name,
+      email: normalizedEmail,
+      password: hashedPassword,
+      phone,
+      dob,
+      gender,
+      orientation,
+      weight,
+      city,
+      areaLabel,
+      location,
+      services,
+      userImg,
+      role: 'escort',
+      isVerified: true,
+      allowedtopost: true,
+      createdBy: req.user._id // optional audit trail
+    });
+
+    await newUser.save();
+    console.log(`Admin created user: ${email}`);
+
+    res.status(201).json({ success: true, message: 'User created successfully', user: newUser });
+  } catch (err) {
+    console.error('Admin user creation error:', err);
+    res.status(500).json({ success: false, message: 'Failed to create user' });
+  }
+});
 
 app.get('/login', (req, res)=> {
     if(req.session.isLoggedIn) {
