@@ -251,7 +251,7 @@ const axios = require('axios');
 
 async function submitToIndexNow(urls = []) {
   const payload = {
-    host: 'pervnairobi.onrender.com', // no https here
+    host: 'pervnairobi.onrender.com',
     key: '8bc3f368987740bfb5dc914ffdfdbb43',
     keyLocation: 'https://pervnairobi.onrender.com/8bc3f368987740bfb5dc914ffdfdbb43.txt',
     urlList: urls
@@ -265,9 +265,22 @@ async function submitToIndexNow(urls = []) {
   }
 }
 
-// Use your actual domain in the URL
-const escortUrl = `https://pervnairobi.onrender.com/`;
-submitToIndexNow([escortUrl]);
+// Escort region URLs to submit
+const urlsToSubmit = [
+  'https://pervnairobi.onrender.com/city/Nairobi?gender=Female',
+  'https://pervnairobi.onrender.com/city/Nairobi?gender=male',
+  'https://pervnairobi.onrender.com/escorts-from-cbd',
+  'https://pervnairobi.onrender.com/escorts-from-dandora',
+  'https://pervnairobi.onrender.com/escorts-from-donholm',
+  'https://pervnairobi.onrender.com/escorts-from-embakasi',
+  'https://pervnairobi.onrender.com/escorts-from-githurai',
+  'https://pervnairobi.onrender.com/escorts-from-juja',
+  'https://pervnairobi.onrender.com/escorts-from-kabete',
+  'https://pervnairobi.onrender.com/escorts-from-karen'
+];
+
+// Trigger submission
+submitToIndexNow(urlsToSubmit);
 
 const PRICING = {
   'bronze-weekly': 100,
