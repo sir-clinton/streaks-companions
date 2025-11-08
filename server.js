@@ -251,7 +251,7 @@ const axios = require('axios');
 
 async function submitToIndexNow(urls = []) {
   const payload = {
-    host: 'https://pervnairobi.onrender.com',
+    host: 'pervnairobi.onrender.com', // no https here
     key: '8bc3f368987740bfb5dc914ffdfdbb43',
     keyLocation: 'https://pervnairobi.onrender.com/8bc3f368987740bfb5dc914ffdfdbb43.txt',
     urlList: urls
@@ -264,6 +264,10 @@ async function submitToIndexNow(urls = []) {
     console.error('❌ IndexNow error:', err.message);
   }
 }
+
+// Use your actual domain in the URL
+const escortUrl = `https://pervnairobi.onrender.com/escort`;
+await submitToIndexNow([escortUrl]);
 
 const PRICING = {
   'bronze-weekly': 100,
