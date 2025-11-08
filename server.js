@@ -267,7 +267,7 @@ async function submitToIndexNow(urls = []) {
 
 // Use your actual domain in the URL
 const escortUrl = `https://pervnairobi.onrender.com/`;
-await submitToIndexNow([escortUrl]);
+submitToIndexNow([escortUrl]);
 
 const PRICING = {
   'bronze-weekly': 100,
