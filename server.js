@@ -246,6 +246,25 @@ app.listen(PORT, () => {
 // Escort.createIndexes({ city: 1 });
 // ProfileView.createIndexes({ profile: 1 });
 // server.js (or wherever you configure your app)
+
+const axios = require('axios');
+
+async function submitToIndexNow(urls = []) {
+  const payload = {
+    host: 'https://pervnairobi.onrender.com',
+    key: '8bc3f368987740bfb5dc914ffdfdbb43',
+    keyLocation: 'https://pervnairobi.onrender.com/8bc3f368987740bfb5dc914ffdfdbb43.txt',
+    urlList: urls
+  };
+
+  try {
+    const res = await axios.post('https://api.indexnow.org/indexnow', payload);
+    console.log('✅ IndexNow submitted:', res.status, urls);
+  } catch (err) {
+    console.error('❌ IndexNow error:', err.message);
+  }
+}
+
 const PRICING = {
   'bronze-weekly': 100,
   'silver-weekly': 200,
