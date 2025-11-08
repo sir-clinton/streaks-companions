@@ -1353,9 +1353,8 @@ app.post('/admin/create-user', async (req, res) => {
       userImg,
       role: 'escort',
       isVerified: false,
-      allowedtopost: true,
-      createdBy: req.user._id // optional audit trail
-    });
+      allowedtopost: true
+        });
 
     await newUser.save();
     console.log(`Admin created user: ${email}`);
