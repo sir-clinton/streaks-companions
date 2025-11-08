@@ -1308,7 +1308,6 @@ app.get('/verify/:token', async (req, res) => {
 
 app.post('/admin/create-user', async (req, res) => {
   try {
-    // Optional: verify admin session or token
     if (req.session?.escort?.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Unauthorized' });
     }
@@ -1351,12 +1350,12 @@ app.post('/admin/create-user', async (req, res) => {
       location,
       services,
       userImg,
-      role: 'escort',
+      role: 'user',
       isVerified: false,
       allowedtopost: true
-        });
+    });
 
-    await newUser.save();
+    await newUser.save(); // ✅ Corrected here
     console.log(`Admin created user: ${email}`);
 
     res.status(201).json({ success: true, message: 'User created successfully', user: newUser });
