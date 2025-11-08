@@ -177,7 +177,11 @@
         body: JSON.stringify(data)
       });
       const result = await res.json();
-      alert('Escort submitted successfully!');
+      if (result.success) {
+        alert('Escort created:');
+      } else {
+        throw new Error(result.message || 'Failed to create escort');
+      }
       form.reset();
     } catch (err) {
       console.error('Submission error:', err);

@@ -1352,7 +1352,7 @@ app.post('/admin/create-user', async (req, res) => {
       services,
       userImg,
       role: 'escort',
-      isVerified: true,
+      isVerified: false,
       allowedtopost: true,
       createdBy: req.user._id // optional audit trail
     });
