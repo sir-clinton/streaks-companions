@@ -276,6 +276,7 @@ const urlsToSubmit = [
   'https://pervnairobi.onrender.com/escorts-from-githurai',
   'https://pervnairobi.onrender.com/escorts-from-juja',
   'https://pervnairobi.onrender.com/escorts-from-kabete',
+  'https://pervnairobi.onrender.com/escorts-from-thika',
   'https://pervnairobi.onrender.com/escorts-from-karen'
 ];
 
