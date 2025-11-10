@@ -1813,7 +1813,7 @@ app.get('/', async (req, res) => {
     if (!verified) {
       // Fetch verified escorts
       const escorts = await Escort.find({ allowedtopost: true })
-        .select('name userImg phone city areaLabel gender dob about')
+        .select('name userImg phone city areaLabel gender dob')
         .lean();
 
       // Active boosts
@@ -1830,7 +1830,7 @@ app.get('/', async (req, res) => {
 
       // Annotate escorts
       verified = escorts
-        .filter(e => e.name && e.about && e.userImg && e.areaLabel)
+        .filter(e => e.name && e.userImg && e.areaLabel)
         .map(e => {
           let age = null;
           if (e.dob) {
