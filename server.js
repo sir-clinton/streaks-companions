@@ -1017,13 +1017,15 @@ app.get('/agencies', async (req, res) => {
   }
 });
 
-const cities = await Escort.distinct("city");
-console.log(cities);
 
 app.get('/city/:name', async (req, res) => {
   const rawCity = req.params.name;
   const rawGender = req.query.gender;
   const rawAgeRange = req.query.age;
+
+  const cities = await Escort.distinct("city");
+  console.log(cities);
+
 
   const city = typeof rawCity === 'string' ? rawCity.trim().toLowerCase() : '';
   const gender = typeof rawGender === 'string' ? rawGender.trim().toLowerCase() : '';
