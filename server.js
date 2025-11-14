@@ -1077,7 +1077,7 @@ app.get('/city/:name', async (req, res) => {
     }, {});
 
     escorts = escorts
-      .filter(e => e.about && e.userImg && e.name && e.areaLabel)
+      .filter(e => e.userImg && e.name && e.areaLabel)
       .map(e => {
         let age = null;
         if (e.dob && !isNaN(new Date(e.dob))) {
