@@ -1017,7 +1017,8 @@ app.get('/agencies', async (req, res) => {
   }
 });
 
-console.log(db.escorts.distinct("city"))
+const cities = await Escort.distinct("city");
+console.log(cities);
 
 app.get('/city/:name', async (req, res) => {
   const rawCity = req.params.name;
