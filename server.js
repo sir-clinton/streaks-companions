@@ -1057,7 +1057,7 @@ app.get('/city/:name', async (req, res) => {
 
     let escorts = await Escort.find({
       allowedtopost: true,
-      city: { $regex: new RegExp(city, 'i') },
+      city: { $regex: rawCity, $options: 'i' },
       gender: { $regex: new RegExp(`^${gender}$`, 'i') }
     }).lean();
 
