@@ -1148,59 +1148,86 @@ app.get('/register', (req, res)=> {
     res.sendFile(path.join(__dirname, 'register.html'));
 })
 
-app.post('/register', async (req, res) => {
-  let escort = req.body;
-  
-  try {
-    const escortExists = await Escort.findOne({ email: escort.email.trim().toLowerCase() });
 
+
+// Configure Nodemailer transporter once at the top
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS // <-- your Gmail app password
+  }
+});
+
+app.post('/register', async (req, res) => {
+  try {
+    let escort = req.body;
+
+    // 1. Normalize email and check duplicates
+    const normalizedEmail = escort.email.trim().toLowerCase();
+    const escortExists = await Escort.findOne({ email: normalizedEmail });
     if (escortExists) {
       return res.status(400).json({ success: false, message: 'This email already exists' });
     }
 
-    let hashedPassword = await bcrypt.hash(req.body.password, 10);
+    // 2. Hash password securely
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    // 3. Generate verification token + expiry
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const verificationExpires = Date.now() + 3600000; // 1 hour
-    escort = { ...escort, password: hashedPassword, isVerified: false, verificationToken, verificationExpires};//default for email verification
-    await new Escort(escort).save();
-    console.log(escort)
-      // Send verification email
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
+
+    // 4. Build escort object
+    escort = {
+      ...escort,
+      email: normalizedEmail,
+      password: hashedPassword,
+      isVerified: false,
+      verificationToken,
+      verificationExpires
+    };
+
+    // 5. Save to DB
+    const newEscort = await new Escort(escort).save();
+    console.log('New user registered:', newEscort.email);
+
+    // 6. Build verification link
+    const verifyLink = `https://nairobiperv.onrender.com/verify/${verificationToken}`;
+
+    // 7. Format expiry date for email
+    const expiryDate = new Date(verificationExpires).toLocaleString('en-KE', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Africa/Nairobi'
     });
 
-    const expiryDate = new Date(verificationExpires).toLocaleString('en-KE', {
-  weekday: 'short',
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  timeZone: 'Africa/Nairobi'
-});
-
-const mailOptions = {
-  from: process.env.EMAIL_USER,
-  to: escort.email,
-  subject: 'Email Verification',
-  html: `
-    <p>Hi ${escort.name}, Please verify your email by clicking the link below.</p>
-    <a href="https://streak-1.onrender.com/verify/${verificationToken}">Verify Email</a>
-    <p>This link will expire on <strong>${expiryDate}</strong>.</p>
-    <p>If it expires, you can request a new one from the login page.</p>
-  `
-};
+    // 8. Send verification email via Nodemailer
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: normalizedEmail,
+      subject: 'Email Verification',
+      html: `
+        <p>Hello ${escort.name},</p>
+        <p>Please verify your email by clicking the link below:</p>
+        <a href="${verifyLink}" style="display:inline-block;padding:10px 20px;background:#28a745;color:#fff;text-decoration:none;border-radius:4px;">Verify Email</a>
+        <p>This link will expire on <strong>${expiryDate}</strong>.</p>
+        <p>If it expires, you can request a new one from the login page.</p>
+      `
+    };
 
     await transporter.sendMail(mailOptions);
+    console.log("Verification email sent successfully");
 
-    res.status(201).json({ success: true, message: 'Check your email for verification link' });  
-    } catch (err) {
-    console.error(err);
-    return res.status(500).json({ success: false, message: 'Error registering user' });
+    // 9. Respond success
+    res.status(201).json({ success: true, message: 'Check your email for verification link' });
+
+  } catch (err) {
+    console.error('Registration error:', err);
+    res.status(500).json({ success: false, message: 'Error registering user' });
   }
 });
 
@@ -1291,25 +1318,34 @@ app.post('/register-agency', async (req, res) => {
 });
 
 app.get('/verify/:token', async (req, res) => {
-  const { token } = req.params;
+  try {
+    const { token } = req.params;
 
-  const escort = await Escort.findOne({
-    verificationToken: token,
-    verificationExpires: { $gt: Date.now() }
-  });
+    // Find escort with valid token
+    const escort = await Escort.findOne({
+      verificationToken: token,
+      verificationExpires: { $gt: Date.now() }
+    });
 
-  if (!escort) {
-    return res.status(400).send('Invalid or expired token');
+    if (!escort) {
+      console.warn(`Verification failed: invalid or expired token ${token}`);
+      return res.status(400).send('Invalid or expired token');
+    }
+
+    // Mark verified
+    escort.isVerified = true;
+    escort.verificationToken = undefined;
+    escort.verificationExpires = undefined;
+
+    await escort.save();
+    console.log(`Verified account: ${escort.email} (${escort.role || 'escort'})`);
+
+    // Redirect to login page
+    res.redirect('/login');
+  } catch (err) {
+    console.error('Verification error:', err);
+    res.status(500).send('Server error during verification');
   }
-
-  escort.isVerified = true;
-  escort.verificationToken = undefined;
-  escort.verificationExpires = undefined;
-  console.log(`Verified account: ${escort.email} (${escort.role})`);
-
-  await escort.save();
-
-  res.redirect('/login');
 });
 
 app.post('/admin/create-user', async (req, res) => {
@@ -1420,47 +1456,42 @@ app.get('/forgot-password', (req, res)=>{
 })
 
 app.post('/forgot-password', async (req, res) => {
-  const { email } = req.body;
-  const user = await Escort.findOne({ email });
-  if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+  try {
+    const { email } = req.body;
+    const user = await Escort.findOne({ email: email.trim().toLowerCase() });
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
-  const token = crypto.randomBytes(32).toString('hex');
-  user.resetToken = token;
-  user.resetTokenExpiry = Date.now() + 3600000;
-  await user.save();
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetToken = token;
+    user.resetTokenExpiry = Date.now() + 3600000; // 1 hour
+    await user.save();
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+    });
 
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Your Password Reset Link',
-    html: `
-      <p>Hi, Click the link below to reset your password.</p>
-      <button style=" margin: 0.5rem;
-      background: #28a745;
-      padding: 0.7rem 1.5rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;"><a style="text-decoration: none; color: black;"href="https://streak-1.onrender.com/reset-password?token=${token}">Reset Password</a></button>
-      <p>If you didn't request this, please ignore.</p>
-    `
-  };
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Password Reset Request',
+      html: `
+        <p>Hello, ${user.name}</p>
+        <p>Click below to reset your password:</p>
+        <a href="https://nairobiperv.onrender.com/reset-password?token=${token}" 
+           style="display:inline-block;padding:10px 20px;background:#28a745;color:#fff;text-decoration:none;border-radius:5px;">
+           Reset Password
+        </a>
+        <p>This link expires in 1 hour.</p>
+      `
+    };
 
-  transporter.sendMail(mailOptions, (err, info) => {
-    if (err) {
-      console.error('Email error:', err);
-      return res.status(500).json({ success: false, message: 'Email error' });
-    }
-    res.json({ success: true, message: 'Password reset link sent successfully. Check email' });
-  });
+    await transporter.sendMail(mailOptions);
+    res.json({ success: true, message: 'Password reset link sent. Check your email.' });
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    res.status(500).json({ success: false, message: 'Error sending reset link' });
+  }
 });
 
 app.get('/reset-password', (req, res)=>{
@@ -1525,7 +1556,7 @@ app.post('/resend-reset-link', async (req, res) => {
     subject: 'Your Password Reset',
     html: `
       <p>Hi, Click the link below to reset your password.</p>
-      <a href="http://192.168.0.101:3000/reset-password?token=${token}">Reset Password</a>
+      <a href="https://nairobiperv.onrender.com/reset-password?token=${token}">Reset Password</a>
       <p>If you didn't request this, please ignore.</p>
     `
   };
