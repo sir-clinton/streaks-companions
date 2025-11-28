@@ -247,6 +247,9 @@ button[type="button"]:hover {
          </section>
 
          <section id="main" class="main">
+           <div class='category'>
+
+           </div>
             <div class="listings" id="listings" style="position: relative">
               <div id="loading-spinner" style="display: none; text-align: center; padding: 20px;">
                 <i class="fa fa-spinner fa-spin fa-2x" style="color: #999;"></i>
@@ -367,8 +370,7 @@ function allowAccess() {
 </script>
 
 <script defer>
-document.addEventListener('DOMContentLoaded', () => {
-  
+document.addEventListener('DOMContentLoaded', () => { 
   let isProcessing = false;
 
   // Update bookmark icon colors based on localStorage
@@ -532,6 +534,24 @@ function updateBookmarkIcons() {
 
   // Render escort cards with batched DOM write
 function renderEscortCards(escorts) {
+  let category = document.getElementsByClassName('category')[0];
+  category.innerHTML = '';
+
+  if (escorts.length > 0) {
+    // Extract unique categories from escorts
+    let categories = escorts.map(escort => escort.place).filter(Boolean);
+    let unique = [...new Set(categories)];
+
+    // Always show "All" first
+    category.innerHTML = `<button style="margin-right: 8px; margin-bottom: 12px; padding: 8px 12px; border: none; border-radius: 4px; background-color: #007bff; color: white; cursor: pointer;" onclick="window.location.href='/city/all'">All</button>`;
+
+    // Then show each unique category
+    unique.forEach(cat => {
+      category.innerHTML += `<button style="margin-right: 8px; margin-bottom: 12px; padding: 8px 12px; border: none; border-radius: 4px; background-color: #007bff; color: white; cursor: pointer;" onclick="window.location.href='/city/${encodeURIComponent(cat)}'">${cat}</button>`;
+    });
+  } else {
+    category.innerHTML = `<p>No categories available</p>`;
+  }
   const listings = document.getElementById("listings");
   listings.innerHTML = "";
 

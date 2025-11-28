@@ -11,6 +11,7 @@ const escortSchema = new mongoose.Schema({
     userImg: { type: String, default: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png' },
     about: { type: String, default: '' },
     city: { type: String, required: true },
+    place: { type: String},
     dob: { type: Date, required: true },
     orientation: { type: String, required: true},
     location: {

@@ -194,6 +194,11 @@
                         <option value="" disabled selected hidden>Select Area</option>
                       </select>
 
+                      <select name="place" id="place" required>
+                        <option value="" disabled selected hidden>Select Place</option>
+                      </select>
+
+
                         <h4>🧾 What services do you offer?</h4>
                       <select name="services" id="services" required multiple show="2">
                           <option value="DINNER DATE">DINNER DATE</option>
@@ -338,69 +343,150 @@ showStep(currentStep);
   const citySelect = document.getElementById("city");
 
   const locationMap = {
-    Nairobi: [
-      "Kilimani", "Westlands", "Karen", "CBD", "Roysambu", "Ngara", "Donholm", "Nairobi West","Donholm", "Dandora", "Ojijo", "Yaya", "Sarit",
-      "Ruaka", "Syokimau", "Kitengela", "Embakasi", "South B", "South C", "Lavington", "Parklands"
-    ],
-    Kiambu: [
-      "Juja", "Kikuyu", "Ruiru", "Githurai",
-      "Thika", "Limuru", "Kabete", "Tigoni"
-    ],
-    Mombasa: [
-      "Diani", "Nyali", "Likoni",
-      "Mtwapa", "Bamburi", "Shanzu", "Kisauni"
-    ],
-    Nakuru: [
-      "Naivasha", "Nakuru Town", "Gilgil",
-      "Lanet", "Njoro", "Pipeline", "Kabarak"
-    ],
-    Kisumu: [
-      "Kisumu Town",
-      "Milimani", "Riat Hills", "Mamboleo", "Manyatta"
-    ],
-    Eldoret: [
-      "Eldoret Town", "Langas",
-      "Kapsoya", "Elgon View", "Annex", "Pioneer"
-    ],
-    Machakos: [
-      "Athi River", "Kangundo", "Joska", "Mwala", "Syokimau"
-    ],
-    Laikipia: [
-      "Nanyuki", "Rumuruti", "Timau"
-    ],
-    Kajiado: [
-      "Ongata Rongai", "Kitengela", "Ngong", "Kiserian"
-    ],
-    Kilifi: [
-      "Kilifi Town", "Malindi", "Watamu", "Mtwapa"
-    ],
-    UasinGishu: [
-      "Eldoret", "Turbo", "Moiben"
-    ],
-    Kisii: [
-      "Kisii Town", "Nyanchwa", "Suneka"
-    ],
-    Kakamega: [
-      "Kakamega Town", "Shinyalu", "Lurambi"
-    ]
+  Nairobi: {
+    Kilimani: ["Yaya Centre", "Prestige", "Adams Arcade"],
+    Westlands: ["Sarit", "Ojijo", "Raphta Road"],
+    Karen: ["Karen Shopping Centre", "Hardy", "Ngong Road"],
+    CBD: ["Kencom", "Railways", "Moi Avenue"],
+    Roysambu: ["TRM", "Lumumba Drive", "Zimmerman Stage"],
+    Ngara: ["Fig Tree", "Ngara Market"],
+    Donholm: ["Stage 1", "Stage 2", "Phase 8"],
+    NairobiWest: ["Wilson", "Madaraka"],
+    Dandora: ["Phase 1", "Phase 2", "Phase 3", "Phase 4"],
+    Ruaka: ["Quickmart", "Joyland"],
+    Syokimau: ["Gateway Mall", "Katani"],
+    Kitengela: ["Kimalat", "Mlimani", "Deliverance"],
+    Embakasi: ["Pipeline", "Fedha", "Tassia"],
+    SouthB: ["Hazina", "Capital Centre"],
+    SouthC: ["Bellevue", "Mugoya"],
+    Lavington: ["Valley Arcade", "Junction Mall"],
+    Parklands: ["Aga Khan", "Diamond Plaza"]
+  },
+
+  Kiambu: {
+    Juja: ["Juja Stage", "Juja Sewage", "Kalimoni"],
+    Kikuyu: ["Thogoto", "Zambezi", "Dagoretti"],
+    Ruiru: ["Membley", "Kamakis", "Gatongora"],
+    Githurai: ["45 Stage", "Kimbo", "Mwihoko"],
+    Thika: ["Thika Town", "Makongeni", "Landless"],
+    Limuru: ["Tigoni", "Ndeiya"],
+    Kabete: ["Uthiru", "Wangige"],
+    Tigoni: ["Tea Estates", "Limuru Highlands"]
+  },
+
+  Mombasa: {
+    Diani: ["Ukunda", "Galu"],
+    Nyali: ["Nyali Bridge", "City Mall"],
+    Likoni: ["Ferry", "Shelly Beach"],
+    Mtwapa: ["Shanzu", "Jumba Ruins"],
+    Bamburi: ["Bamburi Beach", "Utange"],
+    Shanzu: ["Shanzu Beach", "Shanzu Market"],
+    Kisauni: ["Mjambere", "Bamburi Mwisho"]
+  },
+
+  Nakuru: {
+    Naivasha: ["Karagita", "Kayole"],
+    NakuruTown: ["Railways", "Kenyatta Avenue"],
+    Gilgil: ["Gilgil Town", "Elementaita"],
+    Lanet: ["Pipeline", "Lanet Barracks"],
+    Njoro: ["Egerton", "Njoro Town"],
+    Pipeline: ["Free Area", "Kivumbini"],
+    Kabarak: ["Kabarak University", "Mogoon"]
+  },
+
+  Kisumu: {
+    KisumuTown: ["Kibuye", "Oginga Odinga Street"],
+    Milimani: ["State House", "Impala Park"],
+    RiatHills: ["Riat Estate"],
+    Mamboleo: ["Mamboleo Junction"],
+    Manyatta: ["Manyatta A", "Manyatta B"]
+  },
+
+  Eldoret: {
+    EldoretTown: ["Kenyatta Street", "Zion Mall"],
+    Langas: ["Langas Estate"],
+    Kapsoya: ["Kapsoya Market"],
+    ElgonView: ["Elgon View Estate"],
+    Annex: ["Annex Estate"],
+    Pioneer: ["Pioneer Estate"]
+  },
+
+  Machakos: {
+    AthiRiver: ["Greenpark", "Daystar"],
+    Kangundo: ["Kangundo Town"],
+    Joska: ["Joska Stage"],
+    Mwala: ["Mwala Town"],
+    Syokimau: ["Katani", "Gateway Mall"]
+  },
+
+  Laikipia: {
+    Nanyuki: ["Nanyuki Town", "Airstrip"],
+    Rumuruti: ["Rumuruti Town"],
+    Timau: ["Timau Centre"]
+  },
+
+  Kajiado: {
+    OngataRongai: ["Tuskys Stage", "Kware Stage", "Exiting", "Laiser Hill", "Accacia"],
+    Kitengela: ["Deliverance", "Kimalat"],
+    Ngong: ["Ngong Town", "Ngong Hills"],
+    Kiserian: ["Kiserian Market", "Corner Baridi"]
+  },
+
+  Kilifi: {
+    KilifiTown: ["Kilifi Creek", "Kilifi Market"],
+    Malindi: ["Malindi Town", "Casuarina"],
+    Watamu: ["Watamu Beach", "Watamu Town"],
+    Mtwapa: ["Mtwapa Bridge", "Mtwapa Town"]
+  },
+
+  UasinGishu: {
+    Eldoret: ["Kenyatta Street", "West Market"],
+    Turbo: ["Turbo Town"],
+    Moiben: ["Moiben Centre"]
+  },
+
+  Kisii: {
+    KisiiTown: ["Daraja Mbili", "Nyanchwa"],
+    Nyanchwa: ["Nyanchwa Estate"],
+    Suneka: ["Suneka Town"]
+  },
+
+  Kakamega: {
+    KakamegaTown: ["Bukhungu", "Town Centre"],
+    Shinyalu: ["Shinyalu Market"],
+    Lurambi: ["Lurambi Town"]
+  }
 };
 
 
-  citySelect.addEventListener("change", () => {
-    const selectedCity = citySelect.value;
-    const areas = [...new Set(locationMap[selectedCity] || [])]; //this diduplicating as a case where donholm is twice in nairobi
 
-    // Reset area dropdown
-    areaSelect.innerHTML = '<option value="" disabled selected hidden>Select Area</option>';
+const placeSelect = document.getElementById("place");
 
-    // Populate area dropdown
-    areas.forEach(area => {
-      const option = document.createElement("option");
-      option.value = area;
-      option.textContent = area;
-      areaSelect.appendChild(option);
-    });
+citySelect.addEventListener("change", () => {
+  const selectedCity = citySelect.value;
+  const areas = Object.keys(locationMap[selectedCity] || {});
+  areaSelect.innerHTML = '<option value="" disabled selected hidden>Select Area</option>';
+  placeSelect.innerHTML = '<option value="" disabled selected hidden>Select Place</option>';
+  areas.forEach(area => {
+    const option = document.createElement("option");
+    option.value = area;
+    option.textContent = area;
+    areaSelect.appendChild(option);
   });
+});
+
+areaSelect.addEventListener("change", () => {
+  const selectedCity = citySelect.value;
+  const selectedArea = areaSelect.value;
+  const places = locationMap[selectedCity]?.[selectedArea] || [];
+  placeSelect.innerHTML = '<option value="" disabled selected hidden>Select Place</option>';
+  places.forEach(place => {
+    const option = document.createElement("option");
+    option.value = place;
+    option.textContent = place;
+    placeSelect.appendChild(option);
+  });
+});
 
   const errorDiv = document.getElementById('dob-error');
   dobInput.addEventListener('change', () => {
