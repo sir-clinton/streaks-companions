@@ -1184,7 +1184,12 @@ app.post('/register', async (req, res) => {
       password: hashedPassword,
       isVerified: false,
       verificationToken,
-      verificationExpires
+      verificationExpires,
+      location: {
+        type: "Point",
+        coordinates: escort.coordinates ? escort.coordinates : [0,0]
+      }
+
     };
 
     // 5. Save to DB
