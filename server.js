@@ -1184,17 +1184,25 @@ app.post('/register', async (req, res) => {
       password: hashedPassword,
       isVerified: false,
       verificationToken,
-      verificationExpires,
-      location: {
-        type: "Point",
-        coordinates: escort.coordinates ? escort.coordinates : [0,0]
-      }
-
+      verificationExpires
     };
+    if (escort.lat && escort.lng) {
+      const lat = parseFloat(escort.lat);
+      const lng = parseFloat(escort.lng);
+
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        escort.location = {
+          type: "Point",
+          coordinates: [lng, lat] // GeoJSON requires [longitude, latitude]
+        };
+      }
+      // Clean up raw lat/lng fields so they don't get saved separately
+      delete escort.lat;
+      delete escort.lng;
+    }
 
     // 5. Save to DB
     const newEscort = await new Escort(escort).save();
-    console.log('New user registered:', newEscort.email);
 
     // 6. Build verification link
     const verifyLink = `https://nairobiperv.onrender.com/verify/${verificationToken}`;
