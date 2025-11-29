@@ -354,7 +354,7 @@ showStep(currentStep);
     NairobiWest: ["Wilson", "Madaraka"],
     Dandora: ["Phase 1", "Phase 2", "Phase 3", "Phase 4"],
     Ruaka: ["Quickmart", "Joyland"],
-    Syokimau: ["Gateway Mall", "Katani"],
+    Syokimau: ["Gateway Mall", "Katani", "Maanzoni"],
     Kitengela: ["Kimalat", "Mlimani", "Deliverance"],
     Embakasi: ["Pipeline", "Fedha", "Tassia"],
     SouthB: ["Hazina", "Capital Centre"],
@@ -364,10 +364,10 @@ showStep(currentStep);
   },
 
   Kiambu: {
-    Juja: ["Juja Stage", "Juja Sewage", "Kalimoni"],
+    Juja: ["Juja Stage", "Juja Sewage", "Kalimoni", "Kenyatta Rd", "Juja Square"],
     Kikuyu: ["Thogoto", "Zambezi", "Dagoretti"],
-    Ruiru: ["Membley", "Kamakis", "Gatongora"],
-    Githurai: ["45 Stage", "Kimbo", "Mwihoko"],
+    Ruiru: ["Membley", "Kamakis", "Gatongora", "Tatu City", "Gikambura", "Kahawa Wendani", "Kihunguru"],
+    Githurai: ["45 Stage", "Kimbo", "Mwihoko", "Githurai 44"],
     Thika: ["Thika Town", "Makongeni", "Landless"],
     Limuru: ["Tigoni", "Ndeiya"],
     Kabete: ["Uthiru", "Wangige"],
@@ -513,36 +513,57 @@ areaSelect.addEventListener("change", () => {
 // Submit handler
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  error.innerText = '';
+  error.textContent = '';
 
-  // 1) Client-side password checks
+  // 1) Client-side password + email checks
   const pass = password.value.trim();
-  const confirmPass = confirm.value.trim();
-  if (!pass || pass.length <= 8) {
-    return error.innerText = 'Password is too short!';
+  // Avoid using the variable name "confirm" (conflicts with window.confirm)
+  const confirmPass = confirmPassword.value.trim(); // e.g., document.getElementById('confirmPassword').value
+
+  if (!pass || pass.length < 8) {
+    error.textContent = 'Password must be at least 8 characters.';
+    return;
   }
   if (pass !== confirmPass) {
-   return error.innerText = "Passwords do not match"
-}
-  if(!validateEmail(email.value)) {
-    return error.innerText = 'Email not valid!'
+    error.textContent = 'Passwords do not match.';
+    return;
+  }
+  if (!validateEmail(email.value.trim())) {
+    error.textContent = 'Email not valid!';
+    return;
   }
 
   // 2) Show spinner + disable
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting...';
 
-  // 3) Collect form data
+  // 3) Collect form data safely
   const formData = new FormData(form);
   const formObj = {};
-  formData.forEach((value, key) => {
-    if (formObj[key]) {
-    // Turn single value into array or push additional selections
-      formObj[key] = [].concat(formObj[key], value);
-  } else {
+
+  for (const [key, value] of formData.entries()) {
+    if (key in formObj) {
+      formObj[key] = Array.isArray(formObj[key])
+        ? [...formObj[key], value]
+        : [formObj[key], value];
+    } else {
       formObj[key] = value;
+    }
   }
-});
+
+  // 4) Shape location for MongoDB GeoJSON (if lat/lng are present)
+  if (formObj.lat && formObj.lng) {
+    const lat = parseFloat(formObj.lat);
+    const lng = parseFloat(formObj.lng);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      formObj.location = {
+        type: 'Point',
+        coordinates: [lng, lat] // GeoJSON expects [longitude, latitude]
+      };
+    }
+    delete formObj.lat;
+    delete formObj.lng;
+  }
 
   try {
     const res = await fetch('/register', {
@@ -554,25 +575,18 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify(formObj)
     });
 
-    // 4) Handle non-2xx HTTP
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.message || 'Server responded with ' + res.status);
-    }
-
-    // 5) Parse JSON and check your success flag
-    const data = await res.json();
-    if (!data.success) {
-      throw new Error(data.message || 'Registration failed');
+    // 5) Parse once and validate success
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || `Server responded with ${res.status}`);
     }
 
     // 6) On success, redirect
     window.location.href = '/profile';
   } catch (err) {
     console.log(err);
-    error.innerText = err.message || 'Submission failed. Please try again.';
-      
-    } finally {
+    error.textContent = err.message || 'Submission failed. Please try again.';
+  } finally {
     // 7) Always re-enable & reset button label
     submitBtn.disabled = false;
     submitBtn.innerHTML = 'SUBMIT';
