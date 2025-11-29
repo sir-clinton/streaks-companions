@@ -518,9 +518,8 @@ form.addEventListener('submit', async (e) => {
   // 1) Client-side password + email checks
   const password = document.getElementById('password');
   const pass = password.value.trim();
-  // Avoid using the variable name "confirm" (conflicts with window.confirm)
   const confirmPassword = document.getElementById('confirm');
-  const confirmPass = confirmPassword.value.trim(); // e.g., document.getElementById('confirmPassword').value
+  const confirmPass = confirmPassword.value.trim();
 
   if (!pass || pass.length < 8) {
     error.textContent = 'Password must be at least 8 characters.';
@@ -542,7 +541,6 @@ form.addEventListener('submit', async (e) => {
   // 3) Collect form data safely
   const formData = new FormData(form);
   const formObj = {};
-
   for (const [key, value] of formData.entries()) {
     if (key in formObj) {
       formObj[key] = Array.isArray(formObj[key])
@@ -553,7 +551,6 @@ form.addEventListener('submit', async (e) => {
     }
   }
 
- 
   try {
     const res = await fetch('/register', {
       method: 'POST',
@@ -564,23 +561,15 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify(formObj)
     });
 
-    // 5) Parse once and validate success
-    const data = await res.json().catch(() => ({}));
-    if (!data.success) {
-      throw new Error(data.message || `Server responded with ${res.status}`);
-    }
-
-
-    // 6) On success, redirect
-    window.location.href = '/login';
+    // Parse but ignore errors for now
+    await res.json().catch(() => ({}));
   } catch (err) {
-    console.log(err);
-    window.location.href = '/login';
+    console.log('Ignoring error:', err);
     error.textContent = err.message || 'Submission failed. Please try again.';
   } finally {
-    // 7) Always re-enable & reset button label
-    submitBtn.disabled = false;
+    // Always redirect for now
     window.location.href = '/login';
+    submitBtn.disabled = false;
     submitBtn.innerHTML = 'SUBMIT';
   }
 });
