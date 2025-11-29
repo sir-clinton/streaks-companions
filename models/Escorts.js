@@ -18,10 +18,12 @@ const escortSchema = new mongoose.Schema({
         type: {
             type: String,
             enum: ['Point'],
-            default: 'Point'
+            default: 'Point',
+            required: true
         },
         coordinates: {
-            type: [Number]
+            type: [Number],
+            required: true
         }
         },
     areaLabel: { type: String, required: true },

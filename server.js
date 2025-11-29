@@ -1201,6 +1201,11 @@ app.post('/register', async (req, res) => {
       }
       delete escort.lat;
       delete escort.lng;
+    } else {
+      escort.location = {
+        type: "point",
+        coordinates: [parseFloat(0), parseFloat(0)]
+      }
     }
 
     // 5. Save to DB
