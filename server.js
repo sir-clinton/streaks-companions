@@ -1162,6 +1162,7 @@ const transporter = nodemailer.createTransport({
 app.post('/register', async (req, res) => {
   try {
     let escort = req.body;
+    console.log(escort.location);
 
     // 1. Normalize email and check duplicates
     const normalizedEmail = escort.email.trim().toLowerCase();
@@ -1186,6 +1187,7 @@ app.post('/register', async (req, res) => {
       verificationToken,
       verificationExpires
     };
+    delete escort.location;
     if (escort.lat && escort.lng) {
       const lat = parseFloat(escort.lat);
       const lng = parseFloat(escort.lng);
