@@ -1151,7 +1151,7 @@ app.get('/register', (req, res)=> {
 
 
 const transporter = nodemailer.createTransport({
-    host: "nairobiperv@gmail.com",
+    host: "smtp-relay.brevo.com",
     port: 587,
     secure: false,
     auth: {
@@ -1167,6 +1167,46 @@ transporter.verify((error, success) => {
     console.log("SMTP connection successful!");
   }
 });
+
+const emailTemplate = (name, verifyLink, expiryDate) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }
+    .header { background: #f8f9fa; padding: 20px; text-align: center; }
+    .button { display: inline-block; padding: 12px 24px; background: #28a745; color: white; 
+              text-decoration: none; border-radius: 5px; margin: 15px 0; }
+    .footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="margin: 0; color: #333;">Nairobi Perv</h1>
+    </div>
+    
+    <h2>Verify Your Email</h2>
+    <p>Hello <strong>${name}</strong>,</p>
+    <p>Welcome! Please verify your email address to activate your account.</p>
+    
+    <div style="text-align: center;">
+      <a href="${verifyLink}" class="button">Verify Email Address</a>
+    </div>
+    
+    <p><strong>Expires:</strong> ${expiryDate}</p>
+    
+    <div class="footer">
+      <p>If you're having trouble clicking the button, copy and paste this URL into your web browser:</p>
+      <p style="word-break: break-all;">${verifyLink}</p>
+      <p>If you didn't request this, please ignore this email.</p>
+    </div>
+  </div>
+</body>
+</html>
+`;
+// ===== END OF TEMPLATE FUNCTION =====
 
 app.post('/register', async (req, res) => {
   try {
@@ -1235,17 +1275,12 @@ app.post('/register', async (req, res) => {
     });
 
     // 8. Send verification email via Nodemailer
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
+   const mailOptions = {
+      from: `"Nairobi Perv" <${process.env.EMAIL_USER}>`,
       to: normalizedEmail,
-      subject: 'Email Verification',
-      html: `
-        <p>Hello ${escort.name},</p>
-        <p>Please verify your email by clicking the link below:</p>
-        <a href="${verifyLink}" style="display:inline-block;padding:10px 20px;background:#28a745;color:#fff;text-decoration:none;border-radius:4px;">Verify Email</a>
-        <p>This link will expire on <strong>${expiryDate}</strong>.</p>
-        <p>If it expires, you can request a new one from the login page.</p>
-      `
+      subject: 'Verify Your Email Address',
+      html: emailTemplate(escort.name, verifyLink, expiryDate), // ← HERE
+      text: `Hello ${escort.name},\n\nPlease verify your email by visiting this link: ${verifyLink}\n\nThis link expires: ${expiryDate}\n\nIf you didn't create an account, ignore this email.`
     };
 
     await transporter.sendMail(mailOptions);
