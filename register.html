@@ -566,18 +566,21 @@ form.addEventListener('submit', async (e) => {
 
     // 5) Parse once and validate success
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.success) {
+    if (!data.success) {
       throw new Error(data.message || `Server responded with ${res.status}`);
     }
 
+
     // 6) On success, redirect
-    window.location.href = '/profile';
+    window.location.href = '/login';
   } catch (err) {
     console.log(err);
+    window.location.href = '/login';
     error.textContent = err.message || 'Submission failed. Please try again.';
   } finally {
     // 7) Always re-enable & reset button label
     submitBtn.disabled = false;
+    window.location.href = '/login';
     submitBtn.innerHTML = 'SUBMIT';
   }
 });
