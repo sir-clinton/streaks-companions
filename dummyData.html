@@ -93,6 +93,11 @@
     <option value="">Select Area</option>
   </select>
 
+  <label>Place</label>
+  <select name="place" id="placeSelect" required>
+    <option value="">Select Place</option>
+  </select>
+
   <label>Coordinates (longitude, latitude)</label>
   <input type="text" name="coordinates" placeholder="e.g. 36.8223,-1.3078" required />
 
@@ -114,30 +119,57 @@
 
 <script>
   const locationMap = {
-    Nairobi: ["Kilimani", "Westlands", "Karen", "CBD", "Roysambu", "Ngara", "Donholm", "Nairobi West", "Dandora", "Ojijo", "Yaya", "Sarit", "Ruaka", "Syokimau", "Kitengela", "Embakasi", "South B", "South C", "Lavington", "Parklands"],
-    Kiambu: ["Juja", "Kikuyu", "Ruiru", "Githurai", "Thika", "Limuru", "Kabete", "Tigoni"]
-  };
+  Nairobi: {
+    Kilimani: ["Yaya Centre", "Prestige", "Adams Arcade"],
+    Westlands: ["Sarit", "Ojijo", "Raphta Road"],
+    Karen: ["Karen Shopping Centre", "Hardy", "Ngong Road"],
+    CBD: ["Kencom", "Railways", "Moi Avenue"]
+  },
+  Kiambu: {
+    Juja: ["Juja Stage", "Juja Square"],
+    Ruiru: ["Membley", "Kamakis", "Tatu City"],
+    Thika: ["Thika Town", "Makongeni"]
+  }
+};
 
-  const citySelect = document.getElementById('citySelect');
-  const areaSelect = document.getElementById('areaSelect');
+const citySelect = document.getElementById('citySelect');
+const areaSelect = document.getElementById('areaSelect');
+const placeSelect = document.getElementById('placeSelect');
 
-  Object.keys(locationMap).forEach(city => {
+// Populate cities
+Object.keys(locationMap).forEach(city => {
+  const opt = document.createElement('option');
+  opt.value = city;
+  opt.textContent = city;
+  citySelect.appendChild(opt);
+});
+
+// Populate areas when city changes
+citySelect.addEventListener('change', () => {
+  const areas = Object.keys(locationMap[citySelect.value] || {});
+  areaSelect.innerHTML = '<option value="">Select Area</option>';
+  placeSelect.innerHTML = '<option value="">Select Place</option>';
+  areas.forEach(area => {
     const opt = document.createElement('option');
-    opt.value = city;
-    opt.textContent = city;
-    citySelect.appendChild(opt);
+    opt.value = area;
+    opt.textContent = area;
+    areaSelect.appendChild(opt);
   });
+});
 
-  citySelect.addEventListener('change', () => {
-    const areas = locationMap[citySelect.value] || [];
-    areaSelect.innerHTML = '<option value="">Select Area</option>';
-    areas.forEach(area => {
-      const opt = document.createElement('option');
-      opt.value = area;
-      opt.textContent = area;
-      areaSelect.appendChild(opt);
-    });
+// Populate places when area changes
+areaSelect.addEventListener('change', () => {
+  const selectedCity = citySelect.value;
+  const selectedArea = areaSelect.value;
+  const places = locationMap[selectedCity]?.[selectedArea] || [];
+  placeSelect.innerHTML = '<option value="">Select Place</option>';
+  places.forEach(place => {
+    const opt = document.createElement('option');
+    opt.value = place;
+    opt.textContent = place;
+    placeSelect.appendChild(opt);
   });
+});
 
   document.getElementById('escortForm').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -160,6 +192,7 @@
   weight: form.weight.value,
   city: form.city.value,
   areaLabel: form.areaLabel.value,
+  place: form.place.value,
   location: {
     type: "Point",
     coordinates: form.coordinates.value.split(',').map(Number)
