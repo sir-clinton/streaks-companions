@@ -1150,12 +1150,13 @@ app.get('/register', (req, res)=> {
 
 
 
-// Configure Nodemailer transporter once at the top
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS // <-- your Gmail app password
+    user: process.env.EMAIL_USER, // full Gmail address
+    pass: process.env.EMAIL_PASS  // app password, not your login password
   }
 });
 
