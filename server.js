@@ -1152,18 +1152,18 @@ app.get('/register', (req, res)=> {
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  port: 587,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER, // full Gmail address
-    pass: process.env.EMAIL_PASS  // app password, not your login password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
 app.post('/register', async (req, res) => {
   try {
     let escort = req.body;
-    console.log(escort.location);
+    
 
     // 1. Normalize email and check duplicates
     const normalizedEmail = escort.email.trim().toLowerCase();
