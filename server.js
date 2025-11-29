@@ -1247,9 +1247,12 @@ app.post('/register', async (req, res) => {
     res.status(201).json({ success: true, message: 'Check your email for verification link' });
 
   } catch (err) {
-    console.error('Registration error:', err);
-    res.status(500).json({ success: false, message: 'Error registering user' });
-  }
+  console.error('Registration error:', err);
+  res.status(500).json({
+    success: false,
+    message: err.message || 'Error registering user'
+  });
+}
 });
 
 app.post('/register-agency', async (req, res) => {
