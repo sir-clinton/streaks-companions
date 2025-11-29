@@ -1432,6 +1432,7 @@ app.post('/admin/create-user', async (req, res) => {
       weight,
       city,
       areaLabel,
+      place,
       location,
       services,
       userImg
@@ -1456,6 +1457,7 @@ app.post('/admin/create-user', async (req, res) => {
       weight,
       city,
       areaLabel,
+      place,
       location,
       services,
       userImg,

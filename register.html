@@ -532,6 +532,7 @@ form.addEventListener('submit', async (e) => {
   }
 
   submitBtn.disabled = true;
+  previousBtn.disabled = true;
   submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting...';
 
   const formData = new FormData(form);
