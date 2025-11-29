@@ -515,17 +515,14 @@ form.addEventListener('submit', async (e) => {
   e.preventDefault();
   error.textContent = '';
 
-  // 1) Client-side password + email checks
-  const password = document.getElementById('password');
-  const pass = password.value.trim();
-  const confirmPassword = document.getElementById('confirm');
-  const confirmPass = confirmPassword.value.trim();
+  const password = document.getElementById('password').value.trim();
+  const confirmPass = document.getElementById('confirm').value.trim();
 
-  if (!pass || pass.length < 8) {
+  if (!password || password.length < 8) {
     error.textContent = 'Password must be at least 8 characters.';
     return;
   }
-  if (pass !== confirmPass) {
+  if (password !== confirmPass) {
     error.textContent = 'Passwords do not match.';
     return;
   }
@@ -534,35 +531,18 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  // 2) Show spinner + disable
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting...';
 
-  // 3) Collect form data safely
   const formData = new FormData(form);
-  const formObj = {};
-  for (const [key, value] of formData.entries()) {
-    if (key in formObj) {
-      formObj[key] = Array.isArray(formObj[key])
-        ? [...formObj[key], value]
-        : [formObj[key], value];
-    } else {
-      formObj[key] = value;
-    }
-  }
+  const formObj = Object.fromEntries(formData);
 
   try {
-    const res = await fetch('/register', {
+    await fetch('/register', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(formObj)
     });
-
-    // Parse but ignore errors for now
-    await res.json().catch(() => ({}));
   } catch (err) {
     console.log('Ignoring error:', err);
     error.textContent = err.message || 'Submission failed. Please try again.';
