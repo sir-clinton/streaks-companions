@@ -553,20 +553,7 @@ form.addEventListener('submit', async (e) => {
     }
   }
 
-  // 4) Shape location for MongoDB GeoJSON (if lat/lng are present)
-  if (formObj.lat && formObj.lng) {
-    const lat = parseFloat(formObj.lat);
-    const lng = parseFloat(formObj.lng);
-    if (Number.isFinite(lat) && Number.isFinite(lng)) {
-      formObj.location = {
-        type: 'Point',
-        coordinates: [lng, lat] // GeoJSON expects [longitude, latitude]
-      };
-    }
-    delete formObj.lat;
-    delete formObj.lng;
-  }
-
+ 
   try {
     const res = await fetch('/register', {
       method: 'POST',
