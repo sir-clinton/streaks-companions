@@ -1187,20 +1187,21 @@ app.post('/register', async (req, res) => {
       verificationToken,
       verificationExpires
     };
+    
     delete escort.location;
     if (escort.lat && escort.lng) {
       const lat = parseFloat(escort.lat);
       const lng = parseFloat(escort.lng);
 
-      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      if (escort.lat && escort.lng) {
         escort.location = {
           type: "Point",
-          coordinates: [lng, lat] // GeoJSON requires [longitude, latitude]
+          coordinates: [parseFloat(escort.lng), parseFloat(escort.lat)]
         };
       }
-      // Clean up raw lat/lng fields so they don't get saved separately
       delete escort.lat;
       delete escort.lng;
+
     }
 
     // 5. Save to DB

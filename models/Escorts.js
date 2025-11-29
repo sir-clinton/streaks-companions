@@ -14,16 +14,18 @@ const escortSchema = new mongoose.Schema({
     place: { type: String},
     dob: { type: Date, required: true },
     orientation: { type: String, required: true},
-    location: {
+   location: {
         type: {
             type: String,
             enum: ['Point'],
-            default: 'Point'
+            default: 'Point',
+            required: true
         },
         coordinates: {
-            type: [Number]
+            type: [Number],
+            required: true
         }
-    },
+        },
     areaLabel: { type: String, required: true },
     gallery: [{ type: String}],
     phone: { type: String, default: '' },
