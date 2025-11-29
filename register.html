@@ -516,6 +516,7 @@ form.addEventListener('submit', async (e) => {
   error.textContent = '';
 
   // 1) Client-side password + email checks
+  const password = document.getElementById('password');
   const pass = password.value.trim();
   // Avoid using the variable name "confirm" (conflicts with window.confirm)
   const confirmPassword = document.getElementById('confirm');
