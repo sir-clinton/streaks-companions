@@ -1160,6 +1160,14 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+transporter.verify((error, success) => {
+  if (error) {
+    console.log("SMTP connection failed:", error);
+  } else {
+    console.log("SMTP connection successful!");
+  }
+});
+
 app.post('/register', async (req, res) => {
   try {
     let escort = req.body;
